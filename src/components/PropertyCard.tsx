@@ -74,7 +74,7 @@ const PropertyCard = ({
         {/* Price Tag */}
         <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur rounded-lg px-3 py-1">
           <span className="font-bold text-primary">
-            ${price.toLocaleString()}
+            KSh {price.toLocaleString()}
             <span className="text-sm text-muted-foreground">/{priceType}</span>
           </span>
         </div>
