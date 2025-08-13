@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Truck, Star, Shield, Clock, Phone, MapPin, Package, Sofa, Laptop, Car } from "lucide-react";
+import { Star, Shield, Phone, MapPin } from "lucide-react";
 
 const Movers = () => {
   const movingServices = [
@@ -88,23 +88,19 @@ const Movers = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero py-20">
+      <section
+        className="relative py-20 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, hsl(var(--primary) / 0.65), hsl(var(--secondary) / 0.55)), url(https://images.unsplash.com/photo-1472396961693-142e6e269027?w=1600&auto=format&fit=crop)",
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Moving Services & Marketplace
-            </h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Professional Moving Services</h1>
             <p className="text-xl text-white/90 max-w-2xl mx-auto">
-              Find trusted moving services and buy/sell household items safely in our marketplace.
+              Find trusted movers, compare quotes, and book with confidence.
             </p>
-          </div>
-
-          {/* Service Selector */}
-          <div className="flex justify-center mb-8">
-            <div className="bg-white/10 backdrop-blur rounded-full p-1 flex">
-              <Button className="bg-white text-primary">Moving Services</Button>
-              <Button variant="ghost" className="text-white">Marketplace</Button>
-            </div>
           </div>
 
           {/* Search Bar */}
@@ -130,9 +126,7 @@ const Movers = () => {
                     <SelectItem value="office">Office Moving</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button className="bg-gradient-primary">
-                  Get Quotes
-                </Button>
+                <Button className="bg-gradient-primary">Get Quotes</Button>
               </div>
             </CardContent>
           </Card>
@@ -204,79 +198,6 @@ const Movers = () => {
         </div>
       </section>
 
-      {/* Marketplace Section */}
-      <section className="py-16 bg-gradient-card">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Household Items Marketplace</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Buy and sell furniture, electronics, and household items safely with verified users.
-            </p>
-          </div>
-
-          {/* Categories */}
-          <div className="flex justify-center mb-8">
-            <div className="flex flex-wrap gap-2">
-              <Button variant="outline" size="sm">
-                <Sofa className="h-4 w-4 mr-2" />
-                Furniture
-              </Button>
-              <Button variant="outline" size="sm">
-                <Laptop className="h-4 w-4 mr-2" />
-                Electronics
-              </Button>
-              <Button variant="outline" size="sm">
-                <Car className="h-4 w-4 mr-2" />
-                Appliances
-              </Button>
-              <Button variant="outline" size="sm">
-                <Package className="h-4 w-4 mr-2" />
-                Home & Garden
-              </Button>
-            </div>
-          </div>
-
-          {/* Marketplace Items */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {marketplaceItems.map((item) => (
-              <Card key={item.id} className="hover:shadow-card transition-all duration-300">
-                <div className="relative">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                  <Badge className="absolute top-2 left-2 bg-white/90 text-foreground">
-                    {item.category}
-                  </Badge>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold mb-2 line-clamp-1">{item.title}</h3>
-                  <div className="text-2xl font-bold text-primary mb-2">
-                    KSh {item.price.toLocaleString()}
-                  </div>
-                  <div className="flex justify-between items-center text-sm text-muted-foreground mb-3">
-                    <span>Condition: {item.condition}</span>
-                  </div>
-                  <div className="flex items-center text-sm text-muted-foreground mb-3">
-                    <MapPin className="h-4 w-4 mr-1" />
-                    {item.location}
-                  </div>
-                  <Button size="sm" className="w-full">
-                    Contact Seller
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <Button variant="outline" size="lg">
-              View All Items
-            </Button>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

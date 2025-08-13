@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Home, Building, MapPin, Truck } from "lucide-react";
+import { Menu, Home, Building, Building2, MapPin, Truck, ShoppingBag } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 const Navigation = () => {
@@ -11,8 +11,10 @@ const Navigation = () => {
   const navItems = [
     { href: "/", label: "Home", icon: Home },
     { href: "/rentals", label: "House Rentals", icon: Building },
+    { href: "/office", label: "Office", icon: Building2 },
     { href: "/airbnb", label: "Airbnb", icon: MapPin },
-    { href: "/movers", label: "Movers & Marketplace", icon: Truck },
+    { href: "/movers", label: "Movers", icon: Truck },
+    { href: "/marketplace", label: "Marketplace", icon: ShoppingBag },
   ];
 
   const isActive = (path: string) => location.pathname === path;
