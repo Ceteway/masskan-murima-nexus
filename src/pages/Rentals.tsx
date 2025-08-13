@@ -2,10 +2,11 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, Filter, SlidersHorizontal, MapPin, Building } from "lucide-react";
+import { useState } from "react";
+import { allCounties, townsForCounty } from "@/data/locations";
 
 const Rentals = () => {
   // Mock data for rental properties
@@ -126,42 +127,78 @@ const Rentals = () => {
     }
   ];
 
+  const [county, setCounty] = useState<string>("");
+  const [town, setTown] = useState<string>("");
+  const towns = townsForCounty(county);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       {/* Hero Section */}
-      <section className="bg-gradient-hero py-20">
+      <section
+        className="relative py-20 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "linear-gradient(135deg, hsl(var(--primary) / 0.75), hsl(var(--secondary) / 0.65)), url(https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1600&auto=format&fit=crop)",
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
               Find Your Perfect Rental Home
             </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 max-w-2xl mx-auto animate-fade-in">
               Discover long-term rental properties with detailed information, virtual tours, and verified landlords.
             </p>
           </div>
 
           {/* Search Bar */}
-          <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
+          <Card className="max-w-5xl mx-auto bg-white/95 backdrop-blur animate-slide-up">
             <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Location" className="pl-10" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                {/* County */}
+                <Select value={county} onValueChange={(v) => { setCounty(v); setTown(""); }}>
+                  <SelectTrigger>
+                    <MapPin className="h-4 w-4 mr-2" />
+                    <SelectValue placeholder="County" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {allCounties.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Town */}
+                <Select value={town} onValueChange={setTown}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={county ? "Town" : "Select county first"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {towns.map((t) => (
+                      <SelectItem key={t.name} value={t.name}>{t.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                {/* Property Type */}
                 <Select>
                   <SelectTrigger>
                     <Building className="h-4 w-4 mr-2" />
                     <SelectValue placeholder="Property Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="apartment">Apartment</SelectItem>
-                    <SelectItem value="house">House</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="studio">Studio</SelectItem>
+                    <SelectItem value="single">Single Room</SelectItem>
+                    <SelectItem value="bedsitter">Bedsitter</SelectItem>
+                    <SelectItem value="1br">1 Bedroom</SelectItem>
+                    <SelectItem value="2br">2 Bedroom</SelectItem>
+                    <SelectItem value="3br">3 Bedroom</SelectItem>
+                    <SelectItem value="4br">4+ Bedroom</SelectItem>
                   </SelectContent>
                 </Select>
+
+                {/* Price Range */}
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Price Range" />
@@ -173,6 +210,7 @@ const Rentals = () => {
                     <SelectItem value="200000+">KSh 200,000+</SelectItem>
                   </SelectContent>
                 </Select>
+
                 <Button className="bg-gradient-primary">
                   <Search className="h-4 w-4 mr-2" />
                   Search
