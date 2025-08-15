@@ -9,14 +9,15 @@ interface PropertyCardProps {
   title: string;
   location: string;
   price: number;
-  priceType: "month" | "night";
+  price_type?: string;
+  priceType?: "month" | "night";
   rating: number;
-  reviews: number;
+  reviews?: number;
   bedrooms: number;
   bathrooms: number;
   area: number;
   image: string;
-  type: "rental" | "airbnb";
+  type: string;
   featured?: boolean;
 }
 
@@ -24,10 +25,11 @@ const PropertyCard = ({
   title, 
   location, 
   price, 
+  price_type,
   priceType, 
   rating, 
-  reviews, 
-  bedrooms, 
+  reviews = 0, 
+  bedrooms,
   bathrooms, 
   area, 
   image, 
@@ -57,7 +59,7 @@ const PropertyCard = ({
             </Badge>
           )}
           <Badge variant="outline" className="bg-white/90 text-foreground border-white/20">
-            {type === "rental" ? "Rental" : "Airbnb"}
+            {type}
           </Badge>
         </div>
         
@@ -75,7 +77,9 @@ const PropertyCard = ({
         <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur rounded-lg px-3 py-1">
           <span className="font-bold text-primary">
             KSh {price.toLocaleString()}
-            <span className="text-sm text-muted-foreground">/{priceType}</span>
+            <span className="text-sm text-muted-foreground">
+              /{priceType || price_type || (type === "Airbnb" ? "night" : "month")}
+            </span>
           </span>
         </div>
       </div>
@@ -118,7 +122,7 @@ const PropertyCard = ({
 
       <CardFooter className="p-4 pt-0">
         <Button className="w-full bg-gradient-primary" size="lg">
-          {type === "rental" ? "View Details" : "Book Now"}
+          {type === "Rental" ? "View Details" : "Book Now"}
         </Button>
       </CardFooter>
     </Card>

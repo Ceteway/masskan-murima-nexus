@@ -1,87 +1,29 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { useMovingServices } from "@/hooks/useMovingServices";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, Shield, Phone, MapPin } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const Movers = () => {
-  const movingServices = [
-    {
-      id: "1",
-      name: "QuickMove Kenya",
-      rating: 4.8,
-      reviews: 156,
-      location: "Nairobi, Kenya",
-      services: ["Local Moving", "Long Distance", "Packing"],
-      priceRange: "KSh 5,000 - 25,000",
-      verified: true,
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop"
-    },
-    {
-      id: "2",
-      name: "Reliable Movers Ltd",
-      rating: 4.9,
-      reviews: 203,
-      location: "Nairobi & Mombasa",
-      services: ["International", "Storage", "Insurance"],
-      priceRange: "KSh 8,000 - 50,000",
-      verified: true,
-      image: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?w=400&h=300&fit=crop"
-    },
-    {
-      id: "3",
-      name: "Express Movers",
-      rating: 4.7,
-      reviews: 98,
-      location: "Kisumu, Nakuru",
-      services: ["Same Day", "Office Moving", "Fragile Items"],
-      priceRange: "KSh 3,000 - 15,000",
-      verified: true,
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=400&h=300&fit=crop"
-    }
-  ];
+  const [selectedLocation, setSelectedLocation] = useState("");
+  
+  useEffect(() => {
+    document.title = "Moving Services | Masskan Murima";
+  }, []);
 
-  const marketplaceItems = [
-    {
-      id: "1",
-      title: "Modern 3-Seater Sofa",
-      price: 25000,
-      condition: "Excellent",
-      location: "Westlands, Nairobi",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop",
-      category: "Furniture"
-    },
-    {
-      id: "2",
-      title: "Samsung 55\" Smart TV",
-      price: 45000,
-      condition: "Like New",
-      location: "Karen, Nairobi",
-      image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=300&h=200&fit=crop",
-      category: "Electronics"
-    },
-    {
-      id: "3",
-      title: "MacBook Pro 2021",
-      price: 120000,
-      condition: "Good",
-      location: "Kilimani, Nairobi",
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=200&fit=crop",
-      category: "Electronics"
-    },
-    {
-      id: "4",
-      title: "Dining Table Set",
-      price: 18000,
-      condition: "Good",
-      location: "Kileleshwa, Nairobi",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop",
-      category: "Furniture"
-    }
-  ];
+  const { data: movingServices, isLoading, error, refetch } = useMovingServices({
+    location: selectedLocation
+  });
+
+  if (isLoading) return <LoadingSpinner className="py-20" />;
+  if (error) return <ErrorMessage onRetry={() => refetch()} />;
 
   return (
     <div className="min-h-screen bg-background">

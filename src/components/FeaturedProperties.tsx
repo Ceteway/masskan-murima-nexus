@@ -1,69 +1,29 @@
 import PropertyCard from "./PropertyCard";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useFeaturedProperties } from "@/hooks/useProperties";
+import { LoadingSpinner } from "./LoadingSpinner";
+import { ErrorMessage } from "./ErrorMessage";
 
 const FeaturedProperties = () => {
-  // Mock data for featured properties
-  const properties = [
-    {
-      id: "1",
-      title: "Modern 3BR Apartment in Kileleshwa",
-      location: "Kileleshwa, Nairobi",
-      price: 85000,
-      priceType: "month" as const,
-      rating: 4.8,
-      reviews: 24,
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 1200,
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop",
-      type: "rental" as const,
-      featured: true
-    },
-    {
-      id: "2",
-      title: "Cozy Studio Near City Center",
-      location: "Westlands, Nairobi",
-      price: 120,
-      priceType: "night" as const,
-      rating: 4.9,
-      reviews: 42,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 450,
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop",
-      type: "airbnb" as const
-    },
-    {
-      id: "3",
-      title: "Spacious Family Home",
-      location: "Karen, Nairobi",
-      price: 150000,
-      priceType: "month" as const,
-      rating: 4.7,
-      reviews: 18,
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 2200,
-      image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "4",
-      title: "Luxury Penthouse Suite",
-      location: "Kilimani, Nairobi",
-      price: 250,
-      priceType: "night" as const,
-      rating: 5.0,
-      reviews: 31,
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 1800,
-      image: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400&h=300&fit=crop",
-      type: "airbnb" as const,
-      featured: true
-    }
-  ];
+  const { data: properties, isLoading, error, refetch } = useFeaturedProperties();
+
+  if (isLoading) {
+    return <LoadingSpinner className="py-20" />;
+  }
+
+  if (error) {
+    return (
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <ErrorMessage 
+            message="Failed to load featured properties. Please try again." 
+            onRetry={() => refetch()}
+          />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-background">
@@ -86,9 +46,15 @@ const FeaturedProperties = () => {
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {properties.map((property) => (
-            <PropertyCard key={property.id} {...property} />
-          ))}
+          {properties && properties.length > 0 ? (
+            properties.map((property) => (
+              <PropertyCard key={property.id} {...property} />
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8">
+              <p className="text-muted-foreground">No featured properties available at the moment.</p>
+            </div>
+          )}
         </div>
 
         {/* Stats Section */}

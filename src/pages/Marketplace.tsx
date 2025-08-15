@@ -1,56 +1,31 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ErrorMessage } from "@/components/ErrorMessage";
+import { useMarketplaceItems } from "@/hooks/useMarketplace";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Sofa, Laptop, Car, Package, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Marketplace = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  
   useEffect(() => {
     document.title = "Marketplace | Masskan Murima";
   }, []);
 
-  const marketplaceItems = [
-    {
-      id: "1",
-      title: "Modern 3-Seater Sofa",
-      price: 25000,
-      condition: "Excellent",
-      location: "Westlands, Nairobi",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
-      category: "Furniture",
-    },
-    {
-      id: "2",
-      title: "Samsung 55\" Smart TV",
-      price: 45000,
-      condition: "Like New",
-      location: "Karen, Nairobi",
-      image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=400&fit=crop",
-      category: "Electronics",
-    },
-    {
-      id: "3",
-      title: "MacBook Pro 2021",
-      price: 120000,
-      condition: "Good",
-      location: "Kilimani, Nairobi",
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&h=400&fit=crop",
-      category: "Electronics",
-    },
-    {
-      id: "4",
-      title: "Dining Table Set",
-      price: 18000,
-      condition: "Good",
-      location: "Kileleshwa, Nairobi",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
-      category: "Furniture",
-    },
-  ];
+  const { data: marketplaceItems, isLoading, error, refetch } = useMarketplaceItems({
+    search: searchTerm,
+    category: selectedCategory
+  });
+
+  if (isLoading) return <LoadingSpinner className="py-20" />;
+  if (error) return <ErrorMessage onRetry={() => refetch()} />;
 
   return (
     <div className="min-h-screen bg-background">

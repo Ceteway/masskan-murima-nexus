@@ -1,135 +1,63 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ErrorMessage } from "@/components/ErrorMessage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRentalProperties } from "@/hooks/useProperties";
 import { Search, Filter, SlidersHorizontal, MapPin, Building } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { allCounties, townsForCounty } from "@/data/locations";
 
 const Rentals = () => {
-  // Mock data for rental properties
-  const properties = [
-    {
-      id: "1",
-      title: "Single Room in South B",
-      location: "South B, Nairobi",
-      price: 15000,
-      priceType: "month" as const,
-      rating: 4.2,
-      reviews: 18,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 200,
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "2",
-      title: "Cozy Bedsitter in Kasarani",
-      location: "Kasarani, Nairobi",
-      price: 25000,
-      priceType: "month" as const,
-      rating: 4.3,
-      reviews: 22,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 350,
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "3",
-      title: "Modern 1BR Apartment in Kileleshwa",
-      location: "Kileleshwa, Nairobi",
-      price: 45000,
-      priceType: "month" as const,
-      rating: 4.6,
-      reviews: 31,
-      bedrooms: 1,
-      bathrooms: 1,
-      area: 500,
-      image: "https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=300&fit=crop",
-      type: "rental" as const,
-      featured: true
-    },
-    {
-      id: "4",
-      title: "Spacious 2BR in Westlands",
-      location: "Westlands, Nairobi",
-      price: 65000,
-      priceType: "month" as const,
-      rating: 4.7,
-      reviews: 28,
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 800,
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "5",
-      title: "Beautiful 3BR Apartment in Kilimani",
-      location: "Kilimani, Nairobi",
-      price: 95000,
-      priceType: "month" as const,
-      rating: 4.8,
-      reviews: 24,
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 1200,
-      image: "https://images.unsplash.com/photo-1493397212122-2b85dda8106b?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "6",
-      title: "Luxury 4BR Family Home in Karen",
-      location: "Karen, Nairobi",
-      price: 180000,
-      priceType: "month" as const,
-      rating: 4.9,
-      reviews: 15,
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 2200,
-      image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop",
-      type: "rental" as const,
-      featured: true
-    },
-    {
-      id: "7",
-      title: "Executive 5BR Villa in Runda",
-      location: "Runda, Nairobi",
-      price: 320000,
-      priceType: "month" as const,
-      rating: 4.9,
-      reviews: 12,
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 3500,
-      image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=400&h=300&fit=crop",
-      type: "rental" as const
-    },
-    {
-      id: "8",
-      title: "Premium 6BR Mansion in Muthaiga",
-      location: "Muthaiga, Nairobi",
-      price: 450000,
-      priceType: "month" as const,
-      rating: 5.0,
-      reviews: 8,
-      bedrooms: 6,
-      bathrooms: 5,
-      area: 5000,
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=300&fit=crop",
-      type: "rental" as const
-    }
-  ];
+  const [selectedCounty, setSelectedCounty] = useState<string>("");
+  const [selectedTown, setSelectedTown] = useState<string>("");
+  const [searchLocation, setSearchLocation] = useState<string>("");
+  const [propertyType, setPropertyType] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<string>("");
 
-  const [county, setCounty] = useState<string>("");
-  const [town, setTown] = useState<string>("");
-  const towns = townsForCounty(county);
+  useEffect(() => {
+    document.title = "Rentals | Masskan Murima";
+  }, []);
+
+  // Build filters based on user input
+  const filters = {
+    type: "Rental",
+    location: searchLocation || selectedTown || selectedCounty,
+    minPrice: priceRange === "0-50000" ? 0 : priceRange === "50001-100000" ? 50001 : priceRange === "100001-200000" ? 100001 : undefined,
+    maxPrice: priceRange === "0-50000" ? 50000 : priceRange === "50001-100000" ? 100000 : priceRange === "100001-200000" ? 200000 : undefined,
+  };
+
+  const { data: properties, isLoading, error, refetch } = useRentalProperties();
+
+  const towns = townsForCounty(selectedCounty);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <LoadingSpinner className="py-20" />
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-20">
+          <ErrorMessage 
+            message="Failed to load rental properties. Please try again." 
+            onRetry={() => refetch()}
+          />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -158,7 +86,7 @@ const Rentals = () => {
             <CardContent className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                 {/* County */}
-                <Select value={county} onValueChange={(v) => { setCounty(v); setTown(""); }}>
+                <Select value={selectedCounty} onValueChange={(v) => { setSelectedCounty(v); setSelectedTown(""); }}>
                   <SelectTrigger>
                     <MapPin className="h-4 w-4 mr-2" />
                     <SelectValue placeholder="County" />
@@ -171,9 +99,9 @@ const Rentals = () => {
                 </Select>
 
                 {/* Town */}
-                <Select value={town} onValueChange={setTown}>
+                <Select value={selectedTown} onValueChange={setSelectedTown}>
                   <SelectTrigger>
-                    <SelectValue placeholder={county ? "Town" : "Select county first"} />
+                    <SelectValue placeholder={selectedCounty ? "Town" : "Select county first"} />
                   </SelectTrigger>
                   <SelectContent>
                     {towns.map((t) => (
@@ -183,7 +111,7 @@ const Rentals = () => {
                 </Select>
 
                 {/* Property Type */}
-                <Select>
+                <Select value={propertyType} onValueChange={setPropertyType}>
                   <SelectTrigger>
                     <Building className="h-4 w-4 mr-2" />
                     <SelectValue placeholder="Property Type" />
@@ -199,7 +127,7 @@ const Rentals = () => {
                 </Select>
 
                 {/* Price Range */}
-                <Select>
+                <Select value={priceRange} onValueChange={setPriceRange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Price Range" />
                   </SelectTrigger>
@@ -228,7 +156,9 @@ const Rentals = () => {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
               <h2 className="text-2xl font-bold mb-2">Available Properties</h2>
-              <p className="text-muted-foreground">Found {properties.length} properties</p>
+              <p className="text-muted-foreground">
+                Found {properties?.length || 0} properties
+              </p>
             </div>
             <div className="flex items-center space-x-4 mt-4 md:mt-0">
               <Button variant="outline" size="sm">
@@ -244,17 +174,26 @@ const Rentals = () => {
 
           {/* Properties Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {properties.map((property) => (
-              <PropertyCard key={property.id} {...property} />
-            ))}
+            {properties && properties.length > 0 ? (
+              properties.map((property) => (
+                <PropertyCard key={property.id} {...property} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-muted-foreground">No rental properties available at the moment.</p>
+                <p className="text-sm text-muted-foreground mt-2">Try adjusting your search filters.</p>
+              </div>
+            )}
           </div>
 
           {/* Load More */}
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
-              Load More Properties
-            </Button>
-          </div>
+          {properties && properties.length > 0 && (
+            <div className="text-center mt-12">
+              <Button variant="outline" size="lg">
+                Load More Properties
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
