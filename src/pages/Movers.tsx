@@ -121,7 +121,7 @@ const Movers = () => {
                     </div>
                     <div className="text-sm">
                       <span className="font-medium">Price Range: </span>
-                      <span className="text-primary">{service.priceRange}</span>
+                      <span className="text-primary">{service.price_range}</span>
                     </div>
                     <div className="flex gap-2 pt-2">
                       <Button size="sm" className="flex-1">
