@@ -19,6 +19,7 @@ export type Database = {
           category: string
           condition: string
           created_at: string | null
+          created_by: string | null
           id: string
           image: string
           location: string
@@ -30,6 +31,7 @@ export type Database = {
           category: string
           condition: string
           created_at?: string | null
+          created_by?: string | null
           id?: string
           image: string
           location: string
@@ -41,6 +43,7 @@ export type Database = {
           category?: string
           condition?: string
           created_at?: string | null
+          created_by?: string | null
           id?: string
           image?: string
           location?: string
@@ -53,6 +56,7 @@ export type Database = {
       moving_services: {
         Row: {
           created_at: string | null
+          created_by: string | null
           id: string
           image: string
           location: string
@@ -66,6 +70,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          created_by?: string | null
           id?: string
           image: string
           location: string
@@ -79,6 +84,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          created_by?: string | null
           id?: string
           image?: string
           location?: string
@@ -100,6 +106,7 @@ export type Database = {
           bathrooms: number | null
           bedrooms: number | null
           created_at: string | null
+          created_by: string | null
           featured: boolean | null
           id: string
           image: string
@@ -122,6 +129,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           created_at?: string | null
+          created_by?: string | null
           featured?: boolean | null
           id?: string
           image: string
@@ -144,6 +152,7 @@ export type Database = {
           bathrooms?: number | null
           bedrooms?: number | null
           created_at?: string | null
+          created_by?: string | null
           featured?: boolean | null
           id?: string
           image?: string
