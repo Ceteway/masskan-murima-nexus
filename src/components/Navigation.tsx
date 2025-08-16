@@ -7,26 +7,43 @@ import { Menu, Home, Building, Building2, MapPin, Truck, ShoppingBag, User, Sett
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
-
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { user, signOut } = useAuth();
-  const { data: profile } = useProfile();
-
-  const navItems = [
-    { href: "/", label: "Home", icon: Home },
-    { href: "/rentals", label: "House Rentals", icon: Building },
-    { href: "/office", label: "Office", icon: Building2 },
-    { href: "/airbnb", label: "Airbnb", icon: MapPin },
-    { href: "/movers", label: "Movers", icon: Truck },
-    { href: "/marketplace", label: "Marketplace", icon: ShoppingBag },
-  ];
-
+  const {
+    user,
+    signOut
+  } = useAuth();
+  const {
+    data: profile
+  } = useProfile();
+  const navItems = [{
+    href: "/",
+    label: "Home",
+    icon: Home
+  }, {
+    href: "/rentals",
+    label: "House Rentals",
+    icon: Building
+  }, {
+    href: "/office",
+    label: "Office",
+    icon: Building2
+  }, {
+    href: "/airbnb",
+    label: "Airbnb",
+    icon: MapPin
+  }, {
+    href: "/movers",
+    label: "Movers",
+    icon: Truck
+  }, {
+    href: "/marketplace",
+    label: "Marketplace",
+    icon: ShoppingBag
+  }];
   const isActive = (path: string) => location.pathname === path;
-
-  return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  return <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -39,26 +56,15 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                }`}
-              >
+            {navItems.map(item => <Link key={item.href} to={item.href} className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`}>
                 <item.icon className="h-4 w-4" />
-                <span>{item.label}</span>
-              </Link>
-            ))}
+                <span className="mx-0 px-0 font-thin text-left">{item.label}</span>
+              </Link>)}
           </div>
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2">
-            {user ? (
-              <>
+            {user ? <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/dashboard" className="flex items-center space-x-2">
                     <Plus className="h-4 w-4" />
@@ -79,9 +85,7 @@ const Navigation = () => {
                   <DropdownMenuContent className="w-56" align="end" forceMount>
                     <div className="flex items-center justify-start gap-2 p-2">
                       <div className="flex flex-col space-y-1 leading-none">
-                        {profile?.full_name && (
-                          <p className="font-medium">{profile.full_name}</p>
-                        )}
+                        {profile?.full_name && <p className="font-medium">{profile.full_name}</p>}
                         <p className="w-[200px] truncate text-sm text-muted-foreground">
                           {user.email}
                         </p>
@@ -101,26 +105,20 @@ const Navigation = () => {
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      className="cursor-pointer"
-                      onClick={() => signOut()}
-                    >
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                       <LogOut className="mr-2 h-4 w-4" />
                       Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </>
-            ) : (
-              <>
+              </> : <>
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/auth">Login</Link>
                 </Button>
                 <Button size="sm" className="bg-gradient-primary" asChild>
                   <Link to="/auth">Sign Up</Link>
                 </Button>
-              </>
-            )}
+              </>}
           </div>
 
           {/* Mobile Navigation */}
@@ -132,25 +130,13 @@ const Navigation = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[240px] sm:w-[300px]">
               <div className="flex flex-col space-y-4 mt-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    to={item.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      isActive(item.href)
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                    }`}
-                  >
+                {navItems.map(item => <Link key={item.href} to={item.href} onClick={() => setIsOpen(false)} className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`}>
                     <item.icon className="h-4 w-4" />
                     <span>{item.label}</span>
-                  </Link>
-                ))}
+                  </Link>)}
                 <hr className="my-4" />
                 <div className="space-y-2">
-                  {user ? (
-                    <>
+                  {user ? <>
                       <div className="px-3 py-2">
                         <p className="text-sm font-medium">{profile?.full_name || "User"}</p>
                         <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -167,21 +153,14 @@ const Navigation = () => {
                           Dashboard
                         </Link>
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="w-full justify-start"
-                        onClick={() => {
-                          signOut();
-                          setIsOpen(false);
-                        }}
-                      >
+                      <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => {
+                    signOut();
+                    setIsOpen(false);
+                  }}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out
                       </Button>
-                    </>
-                  ) : (
-                    <>
+                    </> : <>
                       <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
                         <Link to="/auth" onClick={() => setIsOpen(false)}>
                           Login
@@ -192,16 +171,13 @@ const Navigation = () => {
                           Sign Up
                         </Link>
                       </Button>
-                    </>
-                  )}
+                    </>}
                 </div>
               </div>
             </SheetContent>
           </Sheet>
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 };
-
 export default Navigation;
