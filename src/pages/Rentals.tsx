@@ -1,201 +1,284 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import PropertyCard from "@/components/PropertyCard";
-import { LoadingSpinner } from "@/components/LoadingSpinner";
-import { ErrorMessage } from "@/components/ErrorMessage";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useRentalProperties } from "@/hooks/useProperties";
-import { Search, Filter, SlidersHorizontal, MapPin, Building } from "lucide-react";
+import PageHero from "@/components/PageHero";
 import { useState, useEffect } from "react";
-import { allCounties, townsForCounty } from "@/data/locations";
+import { Search, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import PropertyCard from "@/components/PropertyCard";
+import BookingModal from "@/components/BookingModal";
+import { locationData, allCounties } from "@/data/locations";
+
+// Mock data for properties
+const mockProperties = [
+  {
+    id: "1",
+    title: "Spacious Family Home",
+    location: "Nairobi West",
+    price: 150000,
+    priceType: "month" as const,
+    rating: 4.5,
+    reviews: 120,
+    bedrooms: 4,
+    bathrooms: 3,
+    area: 2500,
+    image: "/three-bedroom.jpg",
+    type: "House",
+    featured: true,
+    managed_by: "Landlord",
+    landlord_name: "John Doe",
+  },
+  {
+    id: "2",
+    title: "Modern Apartment in CBD",
+    location: "Nairobi CBD",
+    price: 80000,
+    priceType: "month" as const,
+    rating: 4.8,
+    reviews: 95,
+    bedrooms: 2,
+    bathrooms: 2,
+    area: 1200,
+    image: "/two-bedroom.jpg",
+    type: "Apartment",
+    managed_by: "Agency",
+    agency_name: "Prime Properties",
+  },
+  {
+    id: "3",
+    title: "Cozy Studio Flat",
+    location: "Westlands",
+    price: 45000,
+    priceType: "month" as const,
+    rating: 4.2,
+    reviews: 60,
+    bedrooms: 1,
+    bathrooms: 1,
+    area: 600,
+    image: "/one-bedroom.jpg",
+    type: "Studio",
+  },
+  {
+    id: "4",
+    title: "Single Room",
+    location: "Kasarani",
+    price: 10000,
+    priceType: "month" as const,
+    rating: 4.0,
+    reviews: 20,
+    bedrooms: 1,
+    bathrooms: 1,
+    area: 200,
+    image: "/single-room.jpg",
+    type: "Single",
+  },
+  {
+    id: "5",
+    title: "Bedsitter",
+    location: "Roysambu",
+    price: 15000,
+    priceType: "month" as const,
+    rating: 4.1,
+    reviews: 30,
+    bedrooms: 1,
+    bathrooms: 1,
+    area: 300,
+    image: "/bedsitter.jpg",
+    type: "Bedsitter",
+  },
+];
 
 const Rentals = () => {
-  const [selectedCounty, setSelectedCounty] = useState<string>("");
-  const [selectedTown, setSelectedTown] = useState<string>("");
-  const [searchLocation, setSearchLocation] = useState<string>("");
-  const [propertyType, setPropertyType] = useState<string>("");
-  const [priceRange, setPriceRange] = useState<string>("");
+  const [selectedCounty, setSelectedCounty] = useState("");
+  const [selectedTown, setSelectedTown] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+  const [priceRange, setPriceRange] = useState("");
+  const [properties, setProperties] = useState(mockProperties);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   useEffect(() => {
     document.title = "Rentals | Masskan Murima";
   }, []);
 
-  // Build filters based on user input
-  const filters = {
-    type: "Rental",
-    location: searchLocation || selectedTown || selectedCounty,
-    minPrice: priceRange === "0-50000" ? 0 : priceRange === "50001-100000" ? 50001 : priceRange === "100001-200000" ? 100001 : undefined,
-    maxPrice: priceRange === "0-50000" ? 50000 : priceRange === "50001-100000" ? 100000 : priceRange === "100001-200000" ? 200000 : undefined,
+  const handleSearch = () => {
+    let filteredProperties = mockProperties;
+
+    if (selectedTown) {
+      filteredProperties = filteredProperties.filter(property =>
+        property.location.toLowerCase().includes(selectedTown.toLowerCase())
+      );
+    }
+
+    if (propertyType) {
+      filteredProperties = filteredProperties.filter(
+        property => property.type.toLowerCase() === propertyType.toLowerCase()
+      );
+    }
+
+    if (priceRange) {
+      const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+      filteredProperties = filteredProperties.filter(
+        property => property.price >= minPrice && property.price <= maxPrice
+      );
+    }
+
+    setProperties(filteredProperties);
   };
 
-  const { data: properties, isLoading, error, refetch } = useRentalProperties();
+  const handleBookNow = (property) => {
+    setSelectedProperty(property);
+    setIsBookingModalOpen(true);
+  };
 
-  const towns = townsForCounty(selectedCounty);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <LoadingSpinner className="py-20" />
-        <Footer />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="container mx-auto px-4 py-20">
-          <ErrorMessage 
-            message="Failed to load rental properties. Please try again." 
-            onRetry={() => refetch()}
-          />
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  const towns = selectedCounty ? locationData[selectedCounty] : [];
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section */}
-      <section
-        className="relative py-20 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, hsl(var(--primary) / 0.75), hsl(var(--secondary) / 0.65)), url(https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=1600&auto=format&fit=crop)",
-        }}
-      >
+      <PageHero 
+        title="Find Your Perfect Rental Home"
+        subtitle="Discover long-term rental properties with detailed information, virtual tours, and verified landlords."
+        imageUrl="/hero-rentals.jpg"
+      />
+
+      <section className="py-16 -mt-24 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
-              Find Your Perfect Rental Home
-            </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto animate-fade-in">
-              Discover long-term rental properties with detailed information, virtual tours, and verified landlords.
-            </p>
-          </div>
-
-          {/* Search Bar */}
-          <Card className="max-w-5xl mx-auto bg-white/95 backdrop-blur animate-slide-up">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                {/* County */}
-                <Select value={selectedCounty} onValueChange={(v) => { setSelectedCounty(v); setSelectedTown(""); }}>
+            <div className="bg-black/50 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20 animate-slide-up">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Select County</label>
+                <Select 
+                  value={selectedCounty} 
+                  onValueChange={setSelectedCounty}
+                >
                   <SelectTrigger>
-                    <MapPin className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="County" />
+                    <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <SelectValue placeholder="Select county..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {allCounties.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    {allCounties.map((county) => (
+                      <SelectItem key={county} value={county}>
+                        {county}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
 
-                {/* Town */}
-                <Select value={selectedTown} onValueChange={setSelectedTown}>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Select Town</label>
+                <Select 
+                  value={selectedTown} 
+                  onValueChange={setSelectedTown}
+                  disabled={!selectedCounty}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder={selectedCounty ? "Town" : "Select county first"} />
+                    <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <SelectValue placeholder="Select town..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {towns.map((t) => (
-                      <SelectItem key={t.name} value={t.name}>{t.name}</SelectItem>
+                    {towns.map((town) => (
+                      <SelectItem key={town.name} value={town.name}>
+                        {town.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
 
-                {/* Property Type */}
-                <Select value={propertyType} onValueChange={setPropertyType}>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Property Type</label>
+                <Select 
+                  value={propertyType} 
+                  onValueChange={setPropertyType}
+                >
                   <SelectTrigger>
-                    <Building className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Property Type" />
+                    <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                    <SelectValue placeholder="Property..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="single">Single Room</SelectItem>
+                    <SelectItem value="single">Single</SelectItem>
                     <SelectItem value="bedsitter">Bedsitter</SelectItem>
-                    <SelectItem value="1br">1 Bedroom</SelectItem>
-                    <SelectItem value="2br">2 Bedroom</SelectItem>
-                    <SelectItem value="3br">3 Bedroom</SelectItem>
-                    <SelectItem value="4br">4+ Bedroom</SelectItem>
+                    <SelectItem value="one-bedroom">One Bedroom</SelectItem>
+                    <SelectItem value="two-bedroom">Two Bedroom</SelectItem>
+                    <SelectItem value="three-bedroom">Three Bedroom</SelectItem>
+                    <SelectItem value="four-bedroom">Four Bedroom</SelectItem>
+                    <SelectItem value="house">House</SelectItem>
+                    <SelectItem value="apartment">Apartment</SelectItem>
+                    <SelectItem value="studio">Studio</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
 
-                {/* Price Range */}
-                <Select value={priceRange} onValueChange={setPriceRange}>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Price Range</label>
+                <Select 
+                  value={priceRange} 
+                  onValueChange={setPriceRange}
+                >
                   <SelectTrigger>
+                    <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
                     <SelectValue placeholder="Price Range" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="0-50000">KSh 0 - 50,000</SelectItem>
-                    <SelectItem value="50000-100000">KSh 50,000 - 100,000</SelectItem>
-                    <SelectItem value="100000-200000">KSh 100,000 - 200,000</SelectItem>
-                    <SelectItem value="200000+">KSh 200,000+</SelectItem>
+                    <SelectItem value="0-100000">KSh 0 - KSh 100,000</SelectItem>
+                    <SelectItem value="100000-200000">KSh 100,000 - KSh 200,000</SelectItem>
                   </SelectContent>
                 </Select>
-
-                <Button className="bg-gradient-primary">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
               </div>
-            </CardContent>
-          </Card>
+
+                  <Button onClick={handleSearch} className="h-12 bg-orange-500 hover:bg-orange-600">
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Properties Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {/* Filters and Results */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Available Properties</h2>
-              <p className="text-muted-foreground">
-                Found {properties?.length || 0} properties
-              </p>
-            </div>
-            <div className="flex items-center space-x-4 mt-4 md:mt-0">
-              <Button variant="outline" size="sm">
-                <Filter className="h-4 w-4 mr-2" />
-                Filters
-              </Button>
-              <Button variant="outline" size="sm">
-                <SlidersHorizontal className="h-4 w-4 mr-2" />
-                Sort
-              </Button>
-            </div>
-          </div>
-
-          {/* Properties Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {properties && properties.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties.length > 0 ? (
               properties.map((property) => (
-                <PropertyCard key={property.id} {...property} />
+                <div key={property.id} onClick={() => handleBookNow(property)}>
+                  <PropertyCard 
+                    id={property.id}
+                    title={property.title}
+                    location={property.location}
+                    price={property.price}
+                    priceType={property.priceType}
+                    rating={property.rating}
+                    reviews={property.reviews}
+                    bedrooms={property.bedrooms}
+                    bathrooms={property.bathrooms}
+                    area={property.area}
+                    image={property.image}
+                    type={property.type}
+                    featured={property.featured}
+                    managed_by={property.managed_by}
+                    landlord_name={property.landlord_name}
+                    agency_name={property.agency_name}
+                  />
+                </div>
               ))
             ) : (
-              <div className="col-span-full text-center py-12">
-                <p className="text-muted-foreground">No rental properties available at the moment.</p>
-                <p className="text-sm text-muted-foreground mt-2">Try adjusting your search filters.</p>
-              </div>
+              <p className="text-center text-muted-foreground col-span-full">No properties found. Try adjusting your search criteria.</p>
             )}
           </div>
-
-          {/* Load More */}
-          {properties && properties.length > 0 && (
-            <div className="text-center mt-12">
-              <Button variant="outline" size="lg">
-                Load More Properties
-              </Button>
-            </div>
-          )}
         </div>
       </section>
+
+      {selectedProperty && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          propertyTitle={selectedProperty.title}
+        />
+      )}
 
       <Footer />
     </div>

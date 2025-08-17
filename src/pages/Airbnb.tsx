@@ -2,19 +2,27 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PropertyCard from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Calendar, Users, MapPin } from "lucide-react";
+import PageHero from "@/components/PageHero";
+import { useState } from "react";
+import { locationData, allCounties } from "@/data/locations";
+import BookingModal from "@/components/BookingModal";
 
 const Airbnb = () => {
+  const [selectedCounty, setSelectedCounty] = useState("");
+  const [selectedTown, setSelectedTown] = useState("");
+  const [priceRange, setPriceRange] = useState("");
+  const [guests, setGuests] = useState("");
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
   // Mock data for Airbnb properties
   const properties = [
     {
       id: "1",
       title: "Cozy Studio Near City Center",
       location: "Westlands, Nairobi",
-      price: 120,
+      price: 12000,
       priceType: "night" as const,
       rating: 4.9,
       reviews: 42,
@@ -28,7 +36,7 @@ const Airbnb = () => {
       id: "2",
       title: "Luxury Penthouse Suite",
       location: "Kilimani, Nairobi",
-      price: 250,
+      price: 25000,
       priceType: "night" as const,
       rating: 5.0,
       reviews: 31,
@@ -43,7 +51,7 @@ const Airbnb = () => {
       id: "3",
       title: "Modern Apartment with Pool",
       location: "Kileleshwa, Nairobi",
-      price: 180,
+      price: 18000,
       priceType: "night" as const,
       rating: 4.8,
       reviews: 28,
@@ -57,7 +65,7 @@ const Airbnb = () => {
       id: "4",
       title: "Charming Garden Villa",
       location: "Karen, Nairobi",
-      price: 300,
+      price: 30000,
       priceType: "night" as const,
       rating: 4.7,
       reviews: 19,
@@ -69,112 +77,97 @@ const Airbnb = () => {
     }
   ];
 
+  const handleBookNow = (property) => {
+    setSelectedProperty(property);
+    setIsBookingModalOpen(true);
+  };
+
+  const towns = selectedCounty ? locationData[selectedCounty] : [];
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-hero py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Book Amazing Short-Term Stays
-            </h1>
-            <p className="text-xl text-white/90 max-w-2xl mx-auto">
-              Find unique accommodations for your next trip with instant booking and verified hosts.
-            </p>
-          </div>
+      <PageHero 
+        title="Airbnb Stays"
+        subtitle="Experience Kenyan hospitality with our unique stays."
+        imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&auto=format&fit=crop"
+      />
 
-          {/* Search Bar */}
-          <Card className="max-w-5xl mx-auto bg-white/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Where are you going?" className="pl-10" />
-                </div>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input type="date" placeholder="Check-in" className="pl-10" />
-                </div>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input type="date" placeholder="Check-out" className="pl-10" />
-                </div>
-                <Select>
+      <section className="py-16 -mt-24 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-700">Location</label>
+                <Select onValueChange={setSelectedCounty}>
                   <SelectTrigger>
-                    <Users className="h-4 w-4 mr-2" />
-                    <SelectValue placeholder="Guests" />
+                    <SelectValue placeholder="All Locations" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {allCounties.map((county) => (
+                      <SelectItem key={county} value={county}>
+                        {county}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-700">Price per night</label>
+                <Select onValueChange={setPriceRange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="All Prices" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0-10000">KSh 0 - KSh 10,000</SelectItem>
+                    <SelectItem value="10000-20000">KSh 10,000 - KSh 20,000</SelectItem>
+                    <SelectItem value="20000+">KSh 20,000+</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-gray-700">Guests</label>
+                <Select onValueChange={setGuests}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="1">1 Guest</SelectItem>
                     <SelectItem value="2">2 Guests</SelectItem>
                     <SelectItem value="3">3 Guests</SelectItem>
-                    <SelectItem value="4">4 Guests</SelectItem>
-                    <SelectItem value="5+">5+ Guests</SelectItem>
+                    <SelectItem value="4+">4+ Guests</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button className="bg-gradient-primary">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Quick Filters */}
-      <section className="py-8 border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-wrap gap-4 justify-center">
-            <Button variant="outline" size="sm">Entire Place</Button>
-            <Button variant="outline" size="sm">Private Room</Button>
-            <Button variant="outline" size="sm">Shared Room</Button>
-            <Button variant="outline" size="sm">Instant Book</Button>
-            <Button variant="outline" size="sm">Pet Friendly</Button>
-            <Button variant="outline" size="sm">WiFi</Button>
-            <Button variant="outline" size="sm">Pool</Button>
+              <Button className="h-12 bg-blue-500 hover:bg-blue-600 text-white">
+                Filter
+              </Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Properties Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Available Stays</h2>
-              <p className="text-muted-foreground">Over {properties.length} places to stay</p>
-            </div>
-            <Select>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="reviews">Most Reviews</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Properties Grid */}
+          <h2 className="text-2xl font-bold mb-8">Featured Stays</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {properties.map((property) => (
-              <PropertyCard key={property.id} {...property} />
+              <div key={property.id} onClick={() => handleBookNow(property)}>
+                <PropertyCard {...property} />
+              </div>
             ))}
-          </div>
-
-          {/* Load More */}
-          <div className="text-center mt-12">
-            <Button variant="outline" size="lg">
-              Show More Stays
-            </Button>
           </div>
         </div>
       </section>
+
+      {selectedProperty && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          propertyTitle={selectedProperty.title}
+        />
+      )}
 
       <Footer />
     </div>

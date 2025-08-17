@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Home, Calendar } from "lucide-react";
-import heroImage from "@/assets/hero-properties.jpg";
 
 const Hero = () => {
   return (
@@ -9,11 +8,11 @@ const Hero = () => {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src={heroImage}
+          src="/hero-properties.jpg"
           alt="Beautiful properties in Masskan Murima"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-hero"></div>
+        <div className="absolute inset-0 bg-black/50"></div> {/* Darker overlay */}
       </div>
 
       {/* Content */}
@@ -30,83 +29,50 @@ const Hero = () => {
           </p>
 
           {/* Search Form */}
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20 animate-slide-up">
+          <div className="bg-black/50 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20 animate-slide-up">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <label className="text-sm font-medium text-white/80">Location</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Enter location..."
-                    className="pl-10 bg-white/90 border-white/30 focus:border-primary"
+                    className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full"
                   />
                 </div>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <label className="text-sm font-medium text-white/80">Property Type</label>
                 <div className="relative">
                   <Home className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Rental, Airbnb..."
-                    className="pl-10 bg-white/90 border-white/30 focus:border-primary"
+                    className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full"
                   />
                 </div>
               </div>
               
-              <div className="space-y-2">
+              <div className="space-y-2 text-left">
                 <label className="text-sm font-medium text-white/80">Date</label>
                 <div className="relative">
                   <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
-                    type="date"
-                    className="pl-10 bg-white/90 border-white/30 focus:border-primary"
+                    type="text"
+                    placeholder="mm/dd/yyyy"
+                    className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full"
                   />
                 </div>
               </div>
               
               <Button
                 size="lg"
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold h-12"
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold h-12 rounded-full"
               >
                 <Search className="h-4 w-4 mr-2" />
                 Search
               </Button>
             </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 animate-scale-in">
-            <a href="/rentals">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 h-14"
-              >
-                <Home className="h-5 w-5 mr-2" />
-                Browse Rentals
-              </Button>
-            </a>
-            <a href="/airbnb">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 h-14"
-              >
-                <MapPin className="h-5 w-5 mr-2" />
-                Book Airbnb
-              </Button>
-            </a>
-            <a href="/movers">
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20 h-14"
-              >
-                <Search className="h-5 w-5 mr-2" />
-                Find Services
-              </Button>
-            </a>
           </div>
         </div>
       </div>

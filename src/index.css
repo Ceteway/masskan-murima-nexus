@@ -17,11 +17,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 188 85% 36%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 217 91.2% 59.8%; /* A vibrant blue */
+    --primary-foreground: 0 0% 98%; /* White for text on primary */
     
-    --primary-light: 188 85% 45%;
-    --primary-dark: 188 85% 25%;
+    --primary-light: 217 91.2% 65%; /* Lighter shade of primary */
+    --primary-dark: 217 91.2% 50%; /* Darker shade of primary */
 
     --secondary: 22 84% 53%;
     --secondary-foreground: 0 0% 98%;
@@ -116,11 +116,6 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(1200px 600px at 100% -10%, hsl(var(--accent) / 0.5), transparent 60%),
-      radial-gradient(800px 400px at -10% 0%, hsl(var(--primary) / 0.25), transparent 60%),
-      linear-gradient(180deg, hsl(var(--background)), hsl(var(--accent) / 0.2));
-    background-attachment: fixed;
-    background-size: cover;
+    /* Removed background gradients to match the flat design */
   }
 }

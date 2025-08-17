@@ -31,10 +31,8 @@ const Navigation = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-primary">
-              <Home className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-primary">Masskan Murima</span>
+            <img src="/masskan-logo.png" alt="Masskan Rima Logo" className="h-8 w-auto" />
+            <span className="text-xl font-bold text-gray-800">Masskan Rima</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -116,8 +114,8 @@ const Navigation = () => {
                 <Button variant="ghost" size="sm" asChild>
                   <Link to="/auth">Login</Link>
                 </Button>
-                <Button size="sm" className="bg-gradient-primary" asChild>
-                  <Link to="/auth">Sign Up</Link>
+                <Button size="sm" asChild>
+                  <Link to="/auth">Register</Link>
                 </Button>
               </>
             )}
@@ -187,9 +185,9 @@ const Navigation = () => {
                           Login
                         </Link>
                       </Button>
-                      <Button size="sm" className="w-full bg-gradient-primary" asChild>
+                      <Button size="sm" className="w-full" asChild>
                         <Link to="/auth" onClick={() => setIsOpen(false)}>
-                          Sign Up
+                          Register
                         </Link>
                       </Button>
                     </>

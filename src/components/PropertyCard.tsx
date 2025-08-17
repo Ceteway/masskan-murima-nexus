@@ -19,6 +19,9 @@ interface PropertyCardProps {
   image: string;
   type: string;
   featured?: boolean;
+  managed_by?: string;
+  landlord_name?: string;
+  agency_name?: string;
 }
 
 const PropertyCard = ({ 
@@ -34,16 +37,21 @@ const PropertyCard = ({
   area, 
   image, 
   type,
-  featured = false 
+  featured = false,
+  managed_by,
+  landlord_name,
+  agency_name
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
+
+  console.log({ title, image, managed_by, landlord_name, agency_name });
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
       {/* Image Container */}
       <div className="relative overflow-hidden">
         <img 
-          src={image} 
+          src={image || `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`} 
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -93,6 +101,15 @@ const PropertyCard = ({
             <span className="line-clamp-1">{location}</span>
           </div>
         </div>
+
+        {/* Managed by */}
+        {managed_by && (
+          <div className="mb-3">
+            <Badge variant={managed_by === 'Landlord' ? 'default' : 'secondary'}>
+              Managed by {managed_by === 'Landlord' ? landlord_name : agency_name}
+            </Badge>
+          </div>
+        )}
 
         {/* Rating */}
         <div className="flex items-center mb-3">

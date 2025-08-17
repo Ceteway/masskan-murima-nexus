@@ -84,7 +84,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-2 text-primary-foreground/80">
                 <Phone className="h-4 w-4" />
-                <span className="text-sm">+254 700 123 456</span>
+                <span className="text-sm">0731971838</span>
               </div>
               <div className="flex items-center space-x-2 text-primary-foreground/80">
                 <MapPin className="h-4 w-4" />
@@ -98,7 +98,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-primary-foreground/60 text-sm">
-              © 2024 Masskan Murima. All rights reserved.
+              © 2024 Masskan Murima. All rights reserved. Developed by Palsa Developers
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-primary-foreground/60 hover:text-secondary text-sm">Privacy Policy</a>
