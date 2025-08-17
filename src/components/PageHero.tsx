@@ -4,9 +4,10 @@ interface PageHeroProps {
   title: string;
   subtitle: string;
   imageUrl: string;
+  subtitleClassName?: string;
 }
 
-const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, imageUrl }) => {
+const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, imageUrl, subtitleClassName }) => {
   return (
     <section
       className="relative py-20 bg-cover bg-center"
@@ -19,7 +20,7 @@ const PageHero: React.FC<PageHeroProps> = ({ title, subtitle, imageUrl }) => {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 animate-fade-in">
             {title}
           </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto animate-fade-in">
+          <p className={`text-xl text-white/90 max-w-2xl mx-auto animate-fade-in ${subtitleClassName}`}>
             {subtitle}
           </p>
         </div>
