@@ -3,6 +3,9 @@ import Footer from "@/components/Footer";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { ErrorMessage } from "@/components/ErrorMessage";
 import { useMarketplaceItems } from "@/hooks/useMarketplace";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import PurchaseModal from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +19,9 @@ import heroMarketplace from "@/assets/hero-marketplace.jpg";
 const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { user } = useAuth();
   
   useEffect(() => {
     document.title = "Marketplace | Masskan Murima";
@@ -28,6 +34,19 @@ const Marketplace = () => {
 
   if (isLoading) return <LoadingSpinner className="py-20" />;
   if (error) return <ErrorMessage onRetry={() => refetch()} />;
+
+  const handleBuyNow = (item) => {
+    if (!user) {
+      toast.error("Please log in to make a purchase");
+      return;
+    }
+    if (item.created_by === user.id) {
+      toast.error("You cannot purchase your own item");
+      return;
+    }
+    setSelectedItem(item);
+    setIsPurchaseModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -120,7 +139,9 @@ const Marketplace = () => {
                     <MapPin className="h-4 w-4 mr-1" />
                     {item.location}
                   </div>
-                  <Button size="sm" className="w-full">Contact Seller</Button>
+                  <Button size="sm" className="w-full" onClick={() => handleBuyNow(item)}>
+                    Buy Now
+                  </Button>
                 </CardContent>
               </Card>
             ))}
@@ -130,6 +151,14 @@ const Marketplace = () => {
           </div>
         </div>
       </section>
+
+      {selectedItem && (
+        <PurchaseModal
+          isOpen={isPurchaseModalOpen}
+          onClose={() => setIsPurchaseModalOpen(false)}
+          item={selectedItem}
+        />
+      )}
 
       <Footer />
     </div>

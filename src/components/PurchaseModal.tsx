@@ -2,84 +2,80 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { useCreateBooking } from "@/hooks/useBookings";
-import { format } from "date-fns";
+import { useCreatePurchase } from "@/hooks/usePurchases";
 
-interface BookingModalProps {
+interface PurchaseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  propertyTitle: string;
-  propertyId: string;
+  item: {
+    id: string;
+    title: string;
+    price: number;
+    created_by: string;
+  };
 }
 
-const BookingModal = ({ isOpen, onClose, propertyTitle, propertyId }: BookingModalProps) => {
+const PurchaseModal = ({ isOpen, onClose, item }: PurchaseModalProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [date, setDate] = useState("");
+  const [address, setAddress] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
-  const createBooking = useCreateBooking();
+  const createPurchase = useCreatePurchase();
 
-  const handleBooking = async () => {
+  const handlePurchase = async () => {
     if (!user) {
-      toast.error("Please log in to book a property");
+      toast.error("Please log in to make a purchase");
       onClose();
       return;
     }
 
-    if (!name || !email || !phone || !date) {
+    if (!name || !email || !phone || !address) {
       toast.error("Please fill in all fields");
-      return;
-    }
-
-    // Validate date is not in the past
-    const selectedDate = new Date(date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    if (selectedDate < today) {
-      toast.error("Please select a future date");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await createBooking.mutateAsync({
-        property_id: propertyId,
-        guest_name: name,
-        guest_email: email,
-        guest_phone: phone,
-        booking_date: format(selectedDate, 'yyyy-MM-dd'),
+      await createPurchase.mutateAsync({
+        item_id: item.id,
+        seller_id: item.created_by,
+        purchase_price: item.price,
+        buyer_name: name,
+        buyer_email: email,
+        buyer_phone: phone,
+        delivery_address: address,
       });
-      toast.success("Booking request submitted successfully!");
+      toast.success("Purchase request submitted successfully!");
       onClose();
       setName("");
       setEmail("");
       setPhone("");
-      setDate("");
+      setAddress("");
     } catch (error) {
-      console.error("Booking error:", error);
-      toast.error("Failed to submit booking. Please try again.");
+      console.error("Purchase error:", error);
+      toast.error("Failed to submit purchase. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   if (!user) {
-    return null; // Don't show modal if not authenticated
+    return null;
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Book {propertyTitle}</DialogTitle>
+          <DialogTitle>Purchase {item.title}</DialogTitle>
           <DialogDescription>
-            Please fill in your details to book this property.
+            Please fill in your details to purchase this item for KSh {item.price.toLocaleString()}.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -96,20 +92,19 @@ const BookingModal = ({ isOpen, onClose, propertyTitle, propertyId }: BookingMod
             <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="date">Booking Date</Label>
-            <Input 
-              id="date" 
-              type="date" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)}
-              min={format(new Date(), 'yyyy-MM-dd')}
+            <Label htmlFor="address">Delivery Address</Label>
+            <Textarea 
+              id="address" 
+              value={address} 
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter your delivery address..."
             />
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={handleBooking} disabled={isSubmitting}>
-            {isSubmitting ? "Booking..." : "Book Now"}
+          <Button onClick={handlePurchase} disabled={isSubmitting}>
+            {isSubmitting ? "Processing..." : `Buy for KSh ${item.price.toLocaleString()}`}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -117,4 +112,4 @@ const BookingModal = ({ isOpen, onClose, propertyTitle, propertyId }: BookingMod
   );
 };
 
-export default BookingModal;
+export default PurchaseModal;

@@ -9,6 +9,7 @@ export interface MarketplaceItem {
   location: string;
   image: string;
   category: string;
+  created_by: string;
   created_at: string;
   updated_at: string;
 }
