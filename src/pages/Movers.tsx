@@ -73,7 +73,7 @@ const Movers = () => {
       <PageHero 
         title="Professional Moving Services"
         subtitle="Find trusted movers, compare quotes, and book with confidence."
-        imageUrl="/hero-movers.png"
+        imageUrl="/lovable-uploads/f0255d0c-8690-486f-912c-653618f170ca.png"
       />
 
       {/* Search Form */}

@@ -31,7 +31,7 @@ const Navigation = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/masskan-logo.png" alt="Masskan Rima Logo" className="h-8 w-auto" />
+            <img src="/lovable-uploads/8e06edac-8894-46c3-9b37-ceaa1e503c5e.png" alt="Masskan Rima Logo" className="h-8 w-auto" />
             <span className="text-xl font-bold text-gray-800">Masskan Rima</span>
           </Link>
 
