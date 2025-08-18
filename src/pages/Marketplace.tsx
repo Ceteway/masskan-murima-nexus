@@ -10,6 +10,8 @@ import { MapPin, Sofa, Laptop, Car, Package, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
+import PageHero from "@/components/PageHero";
+import heroMarketplace from "@/assets/hero-marketplace.jpg";
 
 const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,30 +33,25 @@ const Marketplace = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero */}
-      <section
-        className="relative py-20 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, hsl(var(--primary) / 0.75), hsl(var(--secondary) / 0.65)), url(https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1600&auto=format&fit=crop)",
-        }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Household Items Marketplace</h1>
-            <p className="text-white/90 max-w-2xl mx-auto text-lg">
-              Buy and sell furniture, electronics, and more with verified users.
-            </p>
-          </div>
+      <PageHero 
+        title="Household Items Marketplace"
+        subtitle="Buy and sell furniture, electronics, and more with verified users."
+        imageUrl={heroMarketplace}
+      />
 
-          {/* Search and Filters */}
-          <Card className="max-w-5xl mx-auto bg-white/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="relative md:col-span-2">
+      <section className="py-16 -mt-24 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="bg-black/50 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="space-y-2 text-left md:col-span-2">
+                <label className="text-sm font-medium text-white/80">Search Items</label>
+                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search items (e.g., Sofa, TV)" className="pl-10" />
+                  <Input placeholder="Search items (e.g., Sofa, TV)" className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full" />
                 </div>
+              </div>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Category</label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
@@ -66,19 +63,13 @@ const Marketplace = () => {
                     <SelectItem value="home">Home & Garden</SelectItem>
                   </SelectContent>
                 </Select>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="nairobi">Nairobi</SelectItem>
-                    <SelectItem value="mombasa">Mombasa</SelectItem>
-                    <SelectItem value="kisumu">Kisumu</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
-            </CardContent>
-          </Card>
+              <Button className="h-12 bg-orange-500 hover:bg-orange-600">
+                <Search className="h-4 w-4 mr-2" />
+                Filter
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -7,6 +7,9 @@ import PageHero from "@/components/PageHero";
 import { useState } from "react";
 import { locationData, allCounties } from "@/data/locations";
 import BookingModal from "@/components/BookingModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import heroAirbnb from "@/assets/hero-airbnb.jpg";
 
 const Airbnb = () => {
   const [selectedCounty, setSelectedCounty] = useState("");
@@ -77,7 +80,13 @@ const Airbnb = () => {
     }
   ];
 
+  const { user } = useAuth();
+
   const handleBookNow = (property) => {
+    if (!user) {
+      toast.error("Please log in to book a property");
+      return;
+    }
     setSelectedProperty(property);
     setIsBookingModalOpen(true);
   };
@@ -91,15 +100,15 @@ const Airbnb = () => {
       <PageHero 
         title="Airbnb Stays"
         subtitle="Experience Kenyan hospitality with our unique stays."
-        imageUrl="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&auto=format&fit=crop"
+        imageUrl={heroAirbnb}
       />
 
       <section className="py-16 -mt-24 relative z-10">
         <div className="container mx-auto px-4">
-          <div className="bg-white/90 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-gray-200">
+          <div className="bg-black/50 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div className="space-y-2 text-left">
-                <label className="text-sm font-medium text-gray-700">Location</label>
+                <label className="text-sm font-medium text-white/80">Location</label>
                 <Select onValueChange={setSelectedCounty}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Locations" />
@@ -114,7 +123,7 @@ const Airbnb = () => {
                 </Select>
               </div>
               <div className="space-y-2 text-left">
-                <label className="text-sm font-medium text-gray-700">Price per night</label>
+                <label className="text-sm font-medium text-white/80">Price per night</label>
                 <Select onValueChange={setPriceRange}>
                   <SelectTrigger>
                     <SelectValue placeholder="All Prices" />
@@ -127,7 +136,7 @@ const Airbnb = () => {
                 </Select>
               </div>
               <div className="space-y-2 text-left">
-                <label className="text-sm font-medium text-gray-700">Guests</label>
+                <label className="text-sm font-medium text-white/80">Guests</label>
                 <Select onValueChange={setGuests}>
                   <SelectTrigger>
                     <SelectValue placeholder="Any" />
@@ -140,7 +149,7 @@ const Airbnb = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <Button className="h-12 bg-blue-500 hover:bg-blue-600 text-white">
+              <Button className="h-12 bg-orange-500 hover:bg-orange-600 text-white">
                 Filter
               </Button>
             </div>

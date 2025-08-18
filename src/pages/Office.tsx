@@ -6,12 +6,30 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, Building2, Search } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import PageHero from "@/components/PageHero";
+import BookingModal from "@/components/BookingModal";
+import heroOffice from "@/assets/hero-office.jpg";
 
 const Office = () => {
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+  const { user } = useAuth();
+
   useEffect(() => {
     document.title = "Office Spaces | Masskan Murima";
   }, []);
+
+  const handleBookNow = (property) => {
+    if (!user) {
+      toast.error("Please log in to book an office space");
+      return;
+    }
+    setSelectedProperty(property);
+    setIsBookingModalOpen(true);
+  };
 
   const offices = [
     {
@@ -63,30 +81,25 @@ const Office = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
 
-      {/* Hero */}
-      <section
-        className="relative py-20 bg-cover bg-center"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, hsl(var(--primary) / 0.7), hsl(var(--secondary) / 0.6)), url(https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&auto=format&fit=crop)",
-        }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center text-white mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Office Spaces for Rent</h1>
-            <p className="text-white/90 max-w-2xl mx-auto text-lg">
-              Flexible offices, co-working, and corporate floors in prime locations.
-            </p>
-          </div>
+      <PageHero 
+        title="Office Spaces for Rent"
+        subtitle="Flexible offices, co-working, and corporate floors in prime locations."
+        imageUrl={heroOffice}
+      />
 
-          {/* Search */}
-          <Card className="max-w-4xl mx-auto bg-white/95 backdrop-blur">
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <section className="py-16 -mt-24 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="bg-black/50 backdrop-blur-md rounded-2xl p-6 md:p-8 shadow-elegant border border-white/20">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Location</label>
                 <div className="relative">
                   <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Location" className="pl-10" />
+                  <Input placeholder="Enter location..." className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full" />
                 </div>
+              </div>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Office Type</label>
                 <Select>
                   <SelectTrigger>
                     <Building2 className="h-4 w-4 mr-2" />
@@ -98,6 +111,9 @@ const Office = () => {
                     <SelectItem value="floor">Whole Floor</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="space-y-2 text-left">
+                <label className="text-sm font-medium text-white/80">Price Range</label>
                 <Select>
                   <SelectTrigger>
                     <SelectValue placeholder="Price Range" />
@@ -108,13 +124,13 @@ const Office = () => {
                     <SelectItem value="150000+">KSh 150,000+</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button className="bg-gradient-primary">
-                  <Search className="h-4 w-4 mr-2" />
-                  Search
-                </Button>
               </div>
-            </CardContent>
-          </Card>
+              <Button className="h-12 bg-orange-500 hover:bg-orange-600">
+                <Search className="h-4 w-4 mr-2" />
+                Search
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -124,11 +140,21 @@ const Office = () => {
           <h2 className="text-2xl font-bold mb-6">Available Offices</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {offices.map((o) => (
-              <PropertyCard key={o.id} {...o} />
+              <div key={o.id} onClick={() => handleBookNow(o)}>
+                <PropertyCard {...o} />
+              </div>
             ))}
           </div>
         </div>
       </section>
+
+      {selectedProperty && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          propertyTitle={selectedProperty.title}
+        />
+      )}
 
       <Footer />
     </div>

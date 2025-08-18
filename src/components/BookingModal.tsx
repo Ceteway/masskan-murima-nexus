@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import { useCreateBooking } from "@/hooks/useBookings";
 
 interface BookingModalProps {
   isOpen: boolean;
@@ -14,12 +17,24 @@ const BookingModal = ({ isOpen, onClose, propertyTitle }: BookingModalProps) => 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const { user } = useAuth();
 
   const handleBooking = () => {
+    if (!user) {
+      toast.error("Please log in to book a property");
+      onClose();
+      return;
+    }
+
     // In a real application, you would handle the booking logic here
     console.log("Booking submitted for:", { propertyTitle, name, email, phone });
+    toast.success("Booking request submitted successfully!");
     onClose();
   };
+
+  if (!user) {
+    return null; // Don't show modal if not authenticated
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
