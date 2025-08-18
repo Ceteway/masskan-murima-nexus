@@ -277,6 +277,7 @@ const Rentals = () => {
           isOpen={isBookingModalOpen}
           onClose={() => setIsBookingModalOpen(false)}
           propertyTitle={selectedProperty.title}
+          propertyId={selectedProperty.id || ''}
         />
       )}
 

@@ -11,25 +11,46 @@ interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   propertyTitle: string;
+  propertyId: string;
 }
 
-const BookingModal = ({ isOpen, onClose, propertyTitle }: BookingModalProps) => {
+const BookingModal = ({ isOpen, onClose, propertyTitle, propertyId }: BookingModalProps) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
   const { user } = useAuth();
+  const createBooking = useCreateBooking();
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (!user) {
       toast.error("Please log in to book a property");
       onClose();
       return;
     }
 
-    // In a real application, you would handle the booking logic here
-    console.log("Booking submitted for:", { propertyTitle, name, email, phone });
-    toast.success("Booking request submitted successfully!");
-    onClose();
+    if (!name || !email || !phone || !date) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    try {
+      await createBooking.mutateAsync({
+        property_id: propertyId,
+        guest_name: name,
+        guest_email: email,
+        guest_phone: phone,
+        booking_date: date,
+      });
+      toast.success("Booking request submitted successfully!");
+      onClose();
+      setName("");
+      setEmail("");
+      setPhone("");
+      setDate("");
+    } catch (error) {
+      toast.error("Failed to submit booking. Please try again.");
+    }
   };
 
   if (!user) {
@@ -57,6 +78,10 @@ const BookingModal = ({ isOpen, onClose, propertyTitle }: BookingModalProps) => 
           <div className="space-y-2">
             <Label htmlFor="phone">Phone Number</Label>
             <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="date">Booking Date</Label>
+            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </div>
         </div>
         <DialogFooter>

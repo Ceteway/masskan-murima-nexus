@@ -175,6 +175,7 @@ const Airbnb = () => {
           isOpen={isBookingModalOpen}
           onClose={() => setIsBookingModalOpen(false)}
           propertyTitle={selectedProperty.title}
+          propertyId={selectedProperty.id || ''}
         />
       )}
 
