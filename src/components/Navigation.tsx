@@ -7,6 +7,7 @@ import { Menu, Home, Building, Building2, MapPin, Truck, ShoppingBag, User, Sett
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
+import ListingForm from "@/components/ListingForm";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,12 +58,8 @@ const Navigation = () => {
           <div className="hidden md:flex items-center space-x-2">
             {user ? (
               <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/dashboard" className="flex items-center space-x-2">
-                    <Plus className="h-4 w-4" />
-                    <span>Post Listing</span>
-                  </Link>
-                </Button>
+                <ListingForm type="property" />
+                <ListingForm type="marketplace" />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
@@ -96,6 +93,12 @@ const Navigation = () => {
                       <Link to="/dashboard" className="cursor-pointer">
                         <Settings className="mr-2 h-4 w-4" />
                         Dashboard
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -153,6 +156,10 @@ const Navigation = () => {
                         <p className="text-sm font-medium">{profile?.full_name || "User"}</p>
                         <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
+                      <div className="space-y-2">
+                        <ListingForm type="property" />
+                        <ListingForm type="marketplace" />
+                      </div>
                       <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
                         <Link to="/profile" onClick={() => setIsOpen(false)}>
                           <User className="mr-2 h-4 w-4" />
@@ -163,6 +170,12 @@ const Navigation = () => {
                         <Link to="/dashboard" onClick={() => setIsOpen(false)}>
                           <Settings className="mr-2 h-4 w-4" />
                           Dashboard
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                        <Link to="/admin" onClick={() => setIsOpen(false)}>
+                          <Settings className="mr-2 h-4 w-4" />
+                          Admin
                         </Link>
                       </Button>
                       <Button 

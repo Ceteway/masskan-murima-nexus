@@ -70,16 +70,13 @@ export const useUserBookings = () => {
         .from("bookings")
         .select(`
           *,
-          properties!inner(title, image, type, location, price, price_type)
+          properties(title, image, type, location, price, price_type)
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(booking => ({
-        ...booking,
-        property: booking.properties
-      })) as Booking[];
+      return data as Booking[];
     },
     enabled: !!user,
   });

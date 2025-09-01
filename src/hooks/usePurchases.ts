@@ -70,16 +70,13 @@ export const useUserPurchases = () => {
         .from("purchases")
         .select(`
           *,
-          marketplace_items!inner(title, image, category)
+          marketplace_items(title, image, category)
         `)
         .eq("buyer_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(purchase => ({
-        ...purchase,
-        item: purchase.marketplace_items
-      })) as Purchase[];
+      return data as Purchase[];
     },
     enabled: !!user,
   });
@@ -97,16 +94,13 @@ export const useUserSales = () => {
         .from("purchases")
         .select(`
           *,
-          marketplace_items!inner(title, image, category)
+          marketplace_items(title, image, category)
         `)
         .eq("seller_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(purchase => ({
-        ...purchase,
-        item: purchase.marketplace_items
-      })) as Purchase[];
+      return data as Purchase[];
     },
     enabled: !!user,
   });

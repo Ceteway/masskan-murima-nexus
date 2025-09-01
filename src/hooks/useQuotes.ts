@@ -74,16 +74,13 @@ export const useUserQuotes = () => {
         .from("mover_quotes")
         .select(`
           *,
-          moving_services!inner(name, image, location, price_range)
+          moving_services(name, image, location, price_range)
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(quote => ({
-        ...quote,
-        service: quote.moving_services
-      })) as Quote[];
+      return data as Quote[];
     },
     enabled: !!user,
   });

@@ -19,15 +19,12 @@ const Admin = () => {
         .from("bookings")
         .select(`
           *,
-          properties!inner(title, image, type, location, price, price_type)
+          properties(title, image, type, location, price, price_type)
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(booking => ({
-        ...booking,
-        property: booking.properties
-      }));
+      return data;
     },
   });
 
@@ -38,15 +35,12 @@ const Admin = () => {
         .from("purchases")
         .select(`
           *,
-          marketplace_items!inner(title, image, category)
+          marketplace_items(title, image, category)
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(purchase => ({
-        ...purchase,
-        item: purchase.marketplace_items
-      }));
+      return data;
     },
   });
 
@@ -57,15 +51,12 @@ const Admin = () => {
         .from("mover_quotes")
         .select(`
           *,
-          moving_services!inner(name, image, location, price_range)
+          moving_services(name, image, location, price_range)
         `)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data?.map(quote => ({
-        ...quote,
-        service: quote.moving_services
-      }));
+      return data;
     },
   });
 
@@ -132,20 +123,20 @@ const Admin = () => {
                           <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div className="flex items-start gap-4">
-                                {booking.property?.image && (
+                                {booking.properties?.image && (
                                   <img
-                                    src={booking.property.image}
-                                    alt={booking.property.title}
+                                    src={booking.properties.image}
+                                    alt={booking.properties.title}
                                     className="w-16 h-16 rounded-lg object-cover"
                                   />
                                 )}
                                 <div className="flex-1">
                                   <h3 className="font-semibold text-lg">
-                                    {booking.property?.title || 'Property'}
+                                    {booking.properties?.title || 'Property'}
                                   </h3>
                                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                                     <MapPin className="h-4 w-4" />
-                                    {booking.property?.location}
+                                    {booking.properties?.location}
                                   </div>
                                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                                     <Calendar className="h-4 w-4" />
@@ -213,20 +204,20 @@ const Admin = () => {
                           <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div className="flex items-start gap-4">
-                                {purchase.item?.image && (
+                                {purchase.marketplace_items?.image && (
                                   <img
-                                    src={purchase.item.image}
-                                    alt={purchase.item.title}
+                                    src={purchase.marketplace_items.image}
+                                    alt={purchase.marketplace_items.title}
                                     className="w-16 h-16 rounded-lg object-cover"
                                   />
                                 )}
                                 <div className="flex-1">
                                   <h3 className="font-semibold text-lg">
-                                    {purchase.item?.title || 'Item'}
+                                    {purchase.marketplace_items?.title || 'Item'}
                                   </h3>
                                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                                     <Package className="h-4 w-4" />
-                                    {purchase.item?.category}
+                                    {purchase.marketplace_items?.category}
                                   </div>
                                   <div className="text-lg font-bold text-primary mb-2">
                                     KSh {purchase.purchase_price.toLocaleString()}
@@ -299,16 +290,16 @@ const Admin = () => {
                           <CardContent className="p-4">
                             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                               <div className="flex items-start gap-4">
-                                {quote.service?.image && (
+                                {quote.moving_services?.image && (
                                   <img
-                                    src={quote.service.image}
-                                    alt={quote.service.name}
+                                    src={quote.moving_services.image}
+                                    alt={quote.moving_services.name}
                                     className="w-16 h-16 rounded-lg object-cover"
                                   />
                                 )}
                                 <div className="flex-1">
                                   <h3 className="font-semibold text-lg">
-                                    {quote.service?.name || 'Moving Service'}
+                                    {quote.moving_services?.name || 'Moving Service'}
                                   </h3>
                                   <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
                                     <Calendar className="h-4 w-4" />
