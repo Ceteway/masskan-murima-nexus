@@ -46,7 +46,7 @@ export const useCreatePurchase = () => {
           buyer_id: user.id,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -70,13 +70,16 @@ export const useUserPurchases = () => {
         .from("purchases")
         .select(`
           *,
-          item:marketplace_items(title, image, category)
+          marketplace_items!inner(title, image, category)
         `)
         .eq("buyer_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Purchase[];
+      return data?.map(purchase => ({
+        ...purchase,
+        item: purchase.marketplace_items
+      })) as Purchase[];
     },
     enabled: !!user,
   });
@@ -94,13 +97,16 @@ export const useUserSales = () => {
         .from("purchases")
         .select(`
           *,
-          item:marketplace_items(title, image, category)
+          marketplace_items!inner(title, image, category)
         `)
         .eq("seller_id", user.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      return data as Purchase[];
+      return data?.map(purchase => ({
+        ...purchase,
+        item: purchase.marketplace_items
+      })) as Purchase[];
     },
     enabled: !!user,
   });

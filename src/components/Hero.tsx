@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Home, Calendar } from "lucide-react";
 
-const Hero = () => {
+const Hero = ({ children }: { children?: React.ReactNode }) => {
   return (
     <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -74,6 +74,11 @@ const Hero = () => {
               </Button>
             </div>
           </div>
+          {children && (
+            <div className="mt-8">
+              {children}
+            </div>
+          )}
         </div>
       </div>
     </section>

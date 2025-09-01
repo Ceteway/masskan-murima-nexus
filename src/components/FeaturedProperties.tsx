@@ -5,8 +5,10 @@ import { useFeaturedProperties } from "@/hooks/useProperties";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 
-const FeaturedProperties = () => {
+const FeaturedProperties = ({ searchResults }: { searchResults?: any[] }) => {
   const { data: properties, isLoading, error, refetch } = useFeaturedProperties();
+  
+  const displayProperties = searchResults || properties;
 
   if (isLoading) {
     return <LoadingSpinner className="py-20" />;
@@ -46,8 +48,8 @@ const FeaturedProperties = () => {
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          {properties && properties.length > 0 ? (
-            properties.map((property) => (
+          {displayProperties && displayProperties.length > 0 ? (
+            displayProperties.map((property) => (
               <PropertyCard key={property.id} {...property} />
             ))
           ) : (

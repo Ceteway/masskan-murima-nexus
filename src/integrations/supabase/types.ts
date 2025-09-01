@@ -92,6 +92,57 @@ export type Database = {
         }
         Relationships: []
       }
+      mover_quotes: {
+        Row: {
+          client_email: string
+          client_name: string
+          client_phone: string
+          created_at: string
+          delivery_location: string
+          id: string
+          inventory: string | null
+          moving_date: string
+          pickup_location: string
+          quote_amount: number | null
+          service_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          client_email: string
+          client_name: string
+          client_phone: string
+          created_at?: string
+          delivery_location: string
+          id?: string
+          inventory?: string | null
+          moving_date: string
+          pickup_location: string
+          quote_amount?: number | null
+          service_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          client_email?: string
+          client_name?: string
+          client_phone?: string
+          created_at?: string
+          delivery_location?: string
+          id?: string
+          inventory?: string | null
+          moving_date?: string
+          pickup_location?: string
+          quote_amount?: number | null
+          service_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       moving_services: {
         Row: {
           created_at: string | null
@@ -242,6 +293,51 @@ export type Database = {
           title?: string
           type?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      purchases: {
+        Row: {
+          buyer_email: string
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at: string
+          delivery_address: string | null
+          id: string
+          item_id: string
+          purchase_price: number
+          seller_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          buyer_email: string
+          buyer_id: string
+          buyer_name: string
+          buyer_phone: string
+          created_at?: string
+          delivery_address?: string | null
+          id?: string
+          item_id: string
+          purchase_price: number
+          seller_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          buyer_email?: string
+          buyer_id?: string
+          buyer_name?: string
+          buyer_phone?: string
+          created_at?: string
+          delivery_address?: string | null
+          id?: string
+          item_id?: string
+          purchase_price?: number
+          seller_id?: string
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
