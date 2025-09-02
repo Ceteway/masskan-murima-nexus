@@ -106,7 +106,7 @@ const PropertyCard = ({
         {managed_by && (
           <div className="mb-3">
             <Badge variant={managed_by === 'Landlord' ? 'default' : 'secondary'}>
-              Managed by {managed_by === 'Landlord' ? landlord_name : agency_name}
+              {managed_by === 'Landlord' ? 'Landlord' : 'Managed by an Agency'}
             </Badge>
           </div>
         )}
