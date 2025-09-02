@@ -15,6 +15,8 @@ const Index = () => {
     setSearchFilters({
       location: filters.location,
       type: filters.type,
+      checkIn: filters.checkIn,
+      checkOut: filters.checkOut,
     });
   };
 

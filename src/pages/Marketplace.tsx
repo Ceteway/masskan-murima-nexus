@@ -66,16 +66,22 @@ const Marketplace = () => {
                 <label className="text-sm font-medium text-white/80">Search Items</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input placeholder="Search items (e.g., Sofa, TV)" className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full" />
+                  <Input 
+                    placeholder="Search items (e.g., Sofa, TV)" 
+                    className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
               </div>
               <div className="space-y-2 text-left">
                 <label className="text-sm font-medium text-white/80">Category</label>
-                <Select>
+                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                   <SelectTrigger>
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="">All Categories</SelectItem>
                     <SelectItem value="furniture">Furniture</SelectItem>
                     <SelectItem value="electronics">Electronics</SelectItem>
                     <SelectItem value="appliances">Appliances</SelectItem>
@@ -96,16 +102,32 @@ const Marketplace = () => {
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 justify-center">
-            <Button variant="outline" size="sm">
+            <Button 
+              variant={selectedCategory === "furniture" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setSelectedCategory("furniture")}
+            >
               <Sofa className="h-4 w-4 mr-2" /> Furniture
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant={selectedCategory === "electronics" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setSelectedCategory("electronics")}
+            >
               <Laptop className="h-4 w-4 mr-2" /> Electronics
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant={selectedCategory === "appliances" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setSelectedCategory("appliances")}
+            >
               <Car className="h-4 w-4 mr-2" /> Appliances
             </Button>
-            <Button variant="outline" size="sm">
+            <Button 
+              variant={selectedCategory === "home" ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setSelectedCategory("home")}
+            >
               <Package className="h-4 w-4 mr-2" /> Home & Garden
             </Button>
           </div>

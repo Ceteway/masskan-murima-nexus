@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon, MapPin, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { locationData, allCounties } from '@/data/locations';
 
 interface SearchBarProps {
   onSearch: (filters: {
@@ -37,12 +38,18 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
         <div className="relative">
           <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Where to?"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="pl-10 bg-white/20 border-white/30 text-white placeholder:text-white/70"
-          />
+          <Select value={location} onValueChange={setLocation}>
+            <SelectTrigger className="pl-10 bg-white/20 border-white/30 text-white">
+              <SelectValue placeholder="Where to?" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(locationData).flat().map((town) => (
+                <SelectItem key={town.name} value={town.name}>
+                  {town.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         
         <Popover>
@@ -65,6 +72,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
               onSelect={setCheckIn}
               disabled={(date) => date < new Date()}
               initialFocus
+              className="pointer-events-auto"
             />
           </PopoverContent>
         </Popover>
@@ -89,6 +97,7 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
               onSelect={setCheckOut}
               disabled={(date) => date < new Date() || (checkIn && date <= checkIn)}
               initialFocus
+              className="pointer-events-auto"
             />
           </PopoverContent>
         </Popover>
