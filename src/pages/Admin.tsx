@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '@/components/Layout';
-import AdminRoute from '@/components/AdminRoute';
+import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -76,7 +76,7 @@ const Admin = () => {
   };
 
   return (
-    <AdminRoute>
+    <ProtectedRoute>
       <Layout>
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
@@ -355,7 +355,7 @@ const Admin = () => {
           </Tabs>
         </div>
       </Layout>
-    </AdminRoute>
+    </ProtectedRoute>
   );
 };
 

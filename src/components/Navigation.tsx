@@ -6,14 +6,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Menu, Home, Building, Building2, MapPin, Truck, ShoppingBag, User, Settings, LogOut, Plus } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAdminAccess } from "@/hooks/useAdminAccess";
+import { useProfile } from "@/hooks/useProfile";
 import ListingForm from "@/components/ListingForm";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const { user, signOut } = useAuth();
-  const { isAdmin } = useAdminAccess();
+  const { data: profile } = useProfile();
 
   const navItems = [
     { href: "/", label: "Home", icon: Home },
@@ -95,14 +95,12 @@ const Navigation = () => {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    {isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Admin
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Admin
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       className="cursor-pointer"

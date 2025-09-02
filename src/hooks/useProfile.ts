@@ -10,7 +10,6 @@ export interface Profile {
   phone: string | null;
   bio: string | null;
   is_verified: boolean;
-  role: 'admin' | 'moderator' | 'user';
   created_at: string;
   updated_at: string;
 }
