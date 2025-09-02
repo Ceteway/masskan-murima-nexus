@@ -1,14 +1,15 @@
 import PropertyCard from "./PropertyCard";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Search, X } from "lucide-react";
 import { useFeaturedProperties } from "@/hooks/useProperties";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 
 const FeaturedProperties = ({ searchResults }: { searchResults?: any[] }) => {
   const { data: properties, isLoading, error, refetch } = useFeaturedProperties();
-  
+
   const displayProperties = searchResults || properties;
+  const isSearchMode = searchResults !== undefined;
 
   if (isLoading) {
     return <LoadingSpinner className="py-20" />;
@@ -34,14 +35,17 @@ const FeaturedProperties = ({ searchResults }: { searchResults?: any[] }) => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Featured Properties
+              {isSearchMode ? "Search Results" : "Featured Properties"}
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl">
-              Discover our handpicked selection of premium properties and stays.
+              {isSearchMode
+                ? "Properties matching your search criteria."
+                : "Discover our handpicked selection of premium properties and stays."
+              }
             </p>
           </div>
           <Button variant="outline" size="lg" className="mt-4 md:mt-0">
-            View All Properties
+            {isSearchMode ? "Browse All Properties" : "View All Properties"}
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
         </div>
@@ -53,8 +57,17 @@ const FeaturedProperties = ({ searchResults }: { searchResults?: any[] }) => {
               <PropertyCard key={property.id} {...property} />
             ))
           ) : (
-            <div className="col-span-full text-center py-8">
-              <p className="text-muted-foreground">No featured properties available at the moment.</p>
+            <div className="col-span-full text-center py-12">
+              <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
+                {isSearchMode ? "No properties found" : "No featured properties available"}
+              </h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                {isSearchMode
+                  ? "Try adjusting your search criteria or browse all available properties."
+                  : "Check back later for our latest featured properties."
+                }
+              </p>
             </div>
           )}
         </div>

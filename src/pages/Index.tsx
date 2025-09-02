@@ -13,10 +13,10 @@ const Index = () => {
 
   const handleSearch = (filters: any) => {
     setSearchFilters({
-      location: filters.location,
-      type: filters.type,
-      checkIn: filters.checkIn,
-      checkOut: filters.checkOut,
+      location: filters.location || undefined,
+      type: filters.type || undefined,
+      checkIn: filters.checkIn || undefined,
+      checkOut: filters.checkOut || undefined,
     });
   };
 

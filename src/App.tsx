@@ -1,4 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminRoute from "@/components/AdminRoute";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -33,9 +35,9 @@ const App = () => (
             <Route path="/movers" element={<Movers />} />
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin" element={<AdminRoute><Admin /></AdminRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
