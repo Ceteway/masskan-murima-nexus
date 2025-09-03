@@ -22,9 +22,6 @@ interface PropertyCardProps {
   managed_by?: string;
   landlord_name?: string;
   agency_name?: string;
-  rental_image_url?: string;
-  office_image_url?: string;
-  airbnb_image_url?: string;
 }
 
 const PropertyCard = ({ 
@@ -43,32 +40,18 @@ const PropertyCard = ({
   featured = false,
   managed_by,
   landlord_name,
-  agency_name,
-  rental_image_url,
-  office_image_url,
-  airbnb_image_url,
+  agency_name
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const getImageUrl = () => {
-    switch (type) {
-      case "Rental":
-        return rental_image_url || image;
-      case "Office":
-        return office_image_url || image;
-      case "Airbnb":
-        return airbnb_image_url || image;
-      default:
-        return image;
-    }
-  };
+  console.log({ title, image, managed_by, landlord_name, agency_name });
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        <img
-          src={getImageUrl()}
+        <img 
+          src={image || `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`} 
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />

@@ -70,7 +70,7 @@ export const useUserBookings = () => {
         .from("bookings")
         .select(`
           *,
-          properties!fk_bookings_property(title, image, type, location, price, price_type)
+          properties(title, image, type, location, price, price_type)
         `)
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });

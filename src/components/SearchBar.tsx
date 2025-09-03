@@ -4,14 +4,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, MapPin, Search, X } from 'lucide-react';
+import { CalendarIcon, MapPin, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { locationData, allCounties } from '@/data/locations';
 
 interface SearchBarProps {
   onSearch: (filters: {
-    location?: string;
+    location: string;
     checkIn?: Date;
     checkOut?: Date;
     type?: string;
@@ -25,28 +25,13 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [type, setType] = useState<string>();
 
   const handleSearch = () => {
-    // Basic validation
-    if (!location && !type && !checkIn && !checkOut) {
-      return; // Don't search if no criteria provided
-    }
-
     onSearch({
-      location: location || undefined,
-      checkIn: checkIn || undefined,
-      checkOut: checkOut || undefined,
-      type: type || undefined,
+      location,
+      checkIn,
+      checkOut,
+      type,
     });
   };
-
-  const handleClear = () => {
-    setLocation('');
-    setCheckIn(undefined);
-    setCheckOut(undefined);
-    setType(undefined);
-    onSearch({});
-  };
-
-  const hasSearchCriteria = location || type || checkIn || checkOut;
 
   return (
     <div className="bg-white/10 backdrop-blur-md rounded-lg p-6 shadow-lg border border-white/20">
@@ -130,25 +115,13 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
           </SelectContent>
         </Select>
 
-        <div className="flex gap-2">
-          <Button
-            onClick={handleSearch}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground flex-1"
-            disabled={!hasSearchCriteria}
-          >
-            <Search className="h-4 w-4 mr-2" />
-            Search
-          </Button>
-          {hasSearchCriteria && (
-            <Button
-              onClick={handleClear}
-              variant="outline"
-              className="bg-white/20 border-white/30 text-white hover:bg-white/30"
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
+        <Button 
+          onClick={handleSearch}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          <Search className="h-4 w-4 mr-2" />
+          Search
+        </Button>
       </div>
     </div>
   );

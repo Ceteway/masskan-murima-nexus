@@ -4,8 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 export interface SearchFilters {
   location?: string;
   type?: string;
-  checkIn?: Date;
-  checkOut?: Date;
   priceMin?: number;
   priceMax?: number;
   bedrooms?: number;
@@ -16,7 +14,6 @@ export const useSearchProperties = (filters: SearchFilters) => {
   return useQuery({
     queryKey: ["search_properties", filters],
     queryFn: async () => {
-      // First, get all properties matching the basic filters
       let query = supabase
         .from("properties")
         .select("*");
@@ -45,43 +42,10 @@ export const useSearchProperties = (filters: SearchFilters) => {
         query = query.gte("bathrooms", filters.bathrooms);
       }
 
-      const { data: properties, error: propertiesError } = await query.order("created_at", { ascending: false });
+      const { data, error } = await query.order("created_at", { ascending: false });
 
-      if (propertiesError) throw propertiesError;
-
-      // If no date filters, return all matching properties
-      if (!filters.checkIn || !filters.checkOut) {
-        return properties;
-      }
-
-      // Filter out properties that are already booked for the selected dates
-      const checkInDate = filters.checkIn.toISOString().split('T')[0];
-      const checkOutDate = filters.checkOut.toISOString().split('T')[0];
-
-      const availableProperties = [];
-
-      for (const property of properties) {
-        // Check if property has any conflicting bookings
-        const { data: bookings, error: bookingsError } = await supabase
-          .from("bookings")
-          .select("booking_date")
-          .eq("property_id", property.id)
-          .eq("status", "confirmed")
-          .gte("booking_date", checkInDate)
-          .lt("booking_date", checkOutDate);
-
-        if (bookingsError) {
-          console.error("Error checking bookings:", bookingsError);
-          continue;
-        }
-
-        // If no conflicting bookings, property is available
-        if (!bookings || bookings.length === 0) {
-          availableProperties.push(property);
-        }
-      }
-
-      return availableProperties;
+      if (error) throw error;
+      return data;
     },
     enabled: Object.keys(filters).length > 0,
   });

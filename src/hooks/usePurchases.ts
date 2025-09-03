@@ -70,7 +70,7 @@ export const useUserPurchases = () => {
         .from("purchases")
         .select(`
           *,
-          marketplace_items!fk_purchases_item(title, image, category)
+          marketplace_items(title, image, category)
         `)
         .eq("buyer_id", user.id)
         .order("created_at", { ascending: false });
@@ -94,7 +94,7 @@ export const useUserSales = () => {
         .from("purchases")
         .select(`
           *,
-          marketplace_items!fk_purchases_item(title, image, category)
+          marketplace_items(title, image, category)
         `)
         .eq("seller_id", user.id)
         .order("created_at", { ascending: false });
