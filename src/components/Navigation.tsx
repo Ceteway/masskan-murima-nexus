@@ -7,6 +7,7 @@ import { Menu, Home, Building, Building2, MapPin, Truck, ShoppingBag, User, Sett
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
+import { useProfile } from "@/hooks/useProfile";
 import ListingForm from "@/components/ListingForm";
 
 const Navigation = () => {
@@ -14,6 +15,7 @@ const Navigation = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
   const { isAdmin } = useAdminAccess();
+  const { data: profile } = useProfile();
 
   const navItems = [
     { href: "/", label: "Home", icon: Home },
