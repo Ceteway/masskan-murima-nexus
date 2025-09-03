@@ -3,7 +3,7 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import FeaturedProperties from "@/components/FeaturedProperties";
 import Footer from "@/components/Footer";
-import SearchBar from '@/components/SearchBar';
+import UniversalSearchBar from '@/components/UniversalSearchBar';
 import { useSearchProperties } from '@/hooks/useSearch';
 import { useState } from 'react';
 
@@ -12,19 +12,22 @@ const Index = () => {
   const { data: searchResults } = useSearchProperties(searchFilters);
 
   const handleSearch = (filters: any) => {
-    setSearchFilters({
-      location: filters.location,
-      type: filters.type,
-      checkIn: filters.checkIn,
-      checkOut: filters.checkOut,
-    });
+    const searchFilters = {
+      location: filters.location || undefined,
+      type: filters.type || undefined,
+      priceMin: undefined,
+      priceMax: undefined,
+      bedrooms: undefined,
+      bathrooms: undefined
+    };
+    setSearchFilters(searchFilters);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <Hero>
-        <SearchBar onSearch={handleSearch} />
+        <UniversalSearchBar />
       </Hero>
       <Features />
       <FeaturedProperties searchResults={searchResults} />

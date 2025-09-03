@@ -176,12 +176,14 @@ const Navigation = () => {
                           Dashboard
                         </Link>
                       </Button>
-                      <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                        <Link to="/admin" onClick={() => setIsOpen(false)}>
-                          <Settings className="mr-2 h-4 w-4" />
-                          Admin
-                        </Link>
-                      </Button>
+                      {isAdmin && (
+                        <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                          <Link to="/admin" onClick={() => setIsOpen(false)}>
+                            <Settings className="mr-2 h-4 w-4" />
+                            Admin
+                          </Link>
+                        </Button>
+                      )}
                       <Button 
                         variant="ghost" 
                         size="sm" 

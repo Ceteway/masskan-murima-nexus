@@ -107,9 +107,9 @@ const SearchBar = ({ onSearch }: SearchBarProps) => {
             <SelectValue placeholder="Property type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="rental">Rental</SelectItem>
-            <SelectItem value="airbnb">Airbnb</SelectItem>
-            <SelectItem value="office">Office Space</SelectItem>
+            <SelectItem value="Rental">Rental</SelectItem>
+            <SelectItem value="Airbnb">Airbnb</SelectItem>
+            <SelectItem value="Office">Office Space</SelectItem>
             <SelectItem value="apartment">Apartment</SelectItem>
             <SelectItem value="house">House</SelectItem>
           </SelectContent>

@@ -7,14 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useUserBookings } from '@/hooks/useBookings';
 import { useUserPurchases } from '@/hooks/usePurchases';
+import { useUserQuotes } from '@/hooks/useQuotes';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ErrorMessage } from '@/components/ErrorMessage';
-import { Calendar, MapPin, Package, Home, Star, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, MapPin, Package, Home, Star, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
 import { format } from 'date-fns';
 
 const Dashboard = () => {
   const { data: bookings, isLoading: bookingsLoading, error: bookingsError, refetch: refetchBookings } = useUserBookings();
   const { data: purchases, isLoading: purchasesLoading, error: purchasesError, refetch: refetchPurchases } = useUserPurchases();
+  const { data: quotes, isLoading: quotesLoading, error: quotesError, refetch: refetchQuotes } = useUserQuotes();
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -54,7 +56,7 @@ const Dashboard = () => {
           </div>
 
           <Tabs defaultValue="bookings" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="bookings" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
                 My Bookings
@@ -62,6 +64,10 @@ const Dashboard = () => {
               <TabsTrigger value="purchases" className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 My Purchases
+              </TabsTrigger>
+              <TabsTrigger value="quotes" className="flex items-center gap-2">
+                <Truck className="h-4 w-4" />
+                Moving Quotes
               </TabsTrigger>
             </TabsList>
 
@@ -211,6 +217,85 @@ const Dashboard = () => {
                       <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">No purchases yet</p>
                       <p className="text-sm text-muted-foreground">Your marketplace purchases will appear here</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="quotes" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5" />
+                    Moving Quotes
+                  </CardTitle>
+                  <CardDescription>
+                    Track your moving service quote requests
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {quotesLoading ? (
+                    <LoadingSpinner />
+                  ) : quotesError ? (
+                    <ErrorMessage onRetry={() => refetchQuotes()} />
+                  ) : quotes && quotes.length > 0 ? (
+                    <div className="space-y-4">
+                      {quotes.map((quote) => (
+                        <Card key={quote.id} className="border-l-4 border-l-accent">
+                          <CardContent className="p-4">
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                              <div className="flex items-start gap-4">
+                                {quote.service?.image && (
+                                  <img
+                                    src={quote.service.image}
+                                    alt={quote.service.name}
+                                    className="w-16 h-16 rounded-lg object-cover"
+                                  />
+                                )}
+                                <div className="flex-1">
+                                  <h3 className="font-semibold text-lg">
+                                    {quote.service?.name || 'Moving Service'}
+                                  </h3>
+                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
+                                    <MapPin className="h-4 w-4" />
+                                    {quote.pickup_location} → {quote.delivery_location}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
+                                    <Calendar className="h-4 w-4" />
+                                    {format(new Date(quote.moving_date), 'PPP')}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    Client: {quote.client_name} • {quote.client_email}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="flex flex-col items-end gap-2">
+                                <Badge className={getStatusColor(quote.status)}>
+                                  <div className="flex items-center gap-1">
+                                    {getStatusIcon(quote.status)}
+                                    {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
+                                  </div>
+                                </Badge>
+                                {quote.quote_amount && (
+                                  <div className="text-lg font-bold text-primary">
+                                    KSh {quote.quote_amount.toLocaleString()}
+                                  </div>
+                                )}
+                                <div className="text-sm text-muted-foreground">
+                                  Requested {format(new Date(quote.created_at), 'MMM dd, yyyy')}
+                                </div>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                      <p className="text-muted-foreground">No quotes yet</p>
+                      <p className="text-sm text-muted-foreground">Your moving service quotes will appear here</p>
                     </div>
                   )}
                 </CardContent>

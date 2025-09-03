@@ -2,11 +2,15 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageHero from "@/components/PageHero";
 import { useState, useEffect } from "react";
-import { Search, MapPin, Calendar, Truck, Star } from "lucide-react"; // Added Star for testimonials
+import { Search, MapPin, Calendar, Truck, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardFooter } from "@/components/ui/card"; // Import CardFooter
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useMovingServices } from "@/hooks/useMovingServices";
+import MovingServiceCard from "@/components/MovingServiceCard";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { ErrorMessage } from "@/components/ErrorMessage";
 
 // Mock data for properties (from Rentals.tsx, not directly used here but for context)
 // const mockProperties = [...] 
@@ -52,17 +56,23 @@ const movingServiceExamples = [
 ];
 
 const Movers = () => {
-  const [locationInput, setLocationInput] = useState(""); // Renamed from fromLocation
+  const [locationInput, setLocationInput] = useState("");
   const [serviceType, setServiceType] = useState("");
-  const [moveDate, setMoveDate] = useState(""); // New state for move date
+  const [moveDate, setMoveDate] = useState("");
+  const [searchFilters, setSearchFilters] = useState({});
+
+  const { data: movingServices, isLoading, error, refetch } = useMovingServices(searchFilters);
 
   useEffect(() => {
     document.title = "Movers | Masskan Murima";
   }, []);
 
   const handleSearch = () => {
-    console.log("Searching with:", { location: locationInput, serviceType, moveDate });
-    // Placeholder for search logic
+    const filters = {
+      location: locationInput || undefined,
+      search: serviceType || undefined,
+    };
+    setSearchFilters(filters);
   };
 
   return (
@@ -190,37 +200,50 @@ const Movers = () => {
         </div>
       </section>
 
-      {/* New Section for Moving Service Examples */}
-      <section className="py-16 bg-gray-900"> {/* Added a background for distinction */}
+      {/* Moving Services Section */}
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold text-center mb-8 text-white">Featured Moves</h2>
+          <h2 className="text-2xl font-bold text-center mb-8">Available Moving Services</h2>
+          
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <ErrorMessage 
+              message="Failed to load moving services. Please try again." 
+              onRetry={() => refetch()}
+            />
+          ) : movingServices && movingServices.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {movingServices.map((service) => (
+                <MovingServiceCard key={service.id} {...service} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No moving services found</p>
+              <p className="text-sm text-muted-foreground">Try adjusting your search criteria</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-16 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <h2 className="text-2xl font-bold text-center mb-8">Customer Testimonials</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {movingServiceExamples.map((example) => (
-              <Card key={example.id} className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
-                <CardContent className="p-4">
-                  {/* Title and Location */}
-                  <div className="mb-3">
-                    <h3 className="font-semibold text-lg mb-1 line-clamp-1">{example.origin} to {example.destination}</h3>
-                    <div className="flex items-center text-muted-foreground text-sm">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      <span className="line-clamp-1">{example.destination}</span>
-                    </div>
+              <Card key={example.id} className="text-center border-0 bg-card/80 backdrop-blur shadow-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    <span className="font-medium ml-2">{example.rating}</span>
                   </div>
-
-                  {/* Testimonial */}
-                  <div className="mb-3">
-                    <div className="flex items-center mb-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                      <span className="font-medium text-sm">{example.rating}</span>
-                    <span className="text-muted-foreground text-sm ml-1">({example.moverName})</span>
-                    </div>
-                    <p className="text-muted-foreground text-sm line-clamp-2">{example.testimonial}</p>
-                  </div>
+                  <p className="text-muted-foreground mb-4">"{example.testimonial}"</p>
+                  <div className="font-semibold">{example.moverName}</div>
+                  <div className="text-sm text-muted-foreground">{example.serviceType}</div>
                 </CardContent>
-
-                <CardFooter className="p-4 pt-0">
-                  <Button className="w-full bg-gradient-primary">View Details</Button>
-                </CardFooter>
               </Card>
             ))}
           </div>
