@@ -97,10 +97,18 @@ const MovingServiceCard = ({
 
         <CardFooter className="p-4 pt-0">
           <Button 
-            className="w-full bg-gradient-primary" 
+            className="w-full bg-gradient-primary flex items-center justify-center gap-2" 
             onClick={() => setIsQuoteModalOpen(true)}
           >
             Get Quote
+            <svg 
+              className="w-4 h-4" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
           </Button>
         </CardFooter>
       </Card>

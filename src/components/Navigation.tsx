@@ -21,9 +21,11 @@ const Navigation = () => {
     { href: "/", label: "Home", icon: Home },
     { href: "/rentals", label: "House Rentals", icon: Building },
     { href: "/office", label: "Office", icon: Building2 },
-    { href: "/airbnb", label: "Airbnb", icon: MapPin },
-    { href: "/movers", label: "Movers", icon: Truck },
+    { href: "/airbnb", label: "Airbnb Stays", icon: MapPin },
+    { href: "/movers", label: "Moving Services", icon: Truck },
     { href: "/marketplace", label: "Marketplace", icon: ShoppingBag },
+    { href: "/about", label: "About Us", icon: User },
+    { href: "/contact", label: "Contact", icon: Building },
   ];
 
   const isActive = (path: string) => location.pathname === path;

@@ -33,7 +33,7 @@ const Office = () => {
 
   const offices = [
     {
-      id: "550e8400-e29b-41d4-a716-446655440021",
+      id: "9d0ffa08-2df5-4a11-91da-662952d7a8a2",
       title: "Modern Co-working Space",
       location: "Westlands, Nairobi",
       price: 40000,
@@ -47,7 +47,7 @@ const Office = () => {
       type: "rental" as const
     },
     {
-      id: "550e8400-e29b-41d4-a716-446655440022",
+      id: "694ee174-ced2-4593-8941-e40fe063a0bd",
       title: "Grade A Office Floor",
       location: "Upper Hill, Nairobi",
       price: 250000,
@@ -62,7 +62,7 @@ const Office = () => {
       featured: true
     },
     {
-      id: "550e8400-e29b-41d4-a716-446655440023",
+      id: "75f43f63-863b-46cf-b74f-394859dc6c33",
       title: "Private Office Suite",
       location: "Kilimani, Nairobi",
       price: 120000,
