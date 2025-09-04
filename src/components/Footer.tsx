@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Home, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-
 const Footer = () => {
-  return (
-    <footer className="bg-primary text-primary-foreground">
+  return <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -56,7 +54,7 @@ const Footer = () => {
               <li><a href="#" className="text-primary-foreground/80 hover:text-secondary transition-colors">Moving Quotes</a></li>
               <li><a href="#" className="text-primary-foreground/80 hover:text-secondary transition-colors">Secure Payments</a></li>
               <li><a href="#" className="text-primary-foreground/80 hover:text-secondary transition-colors">24/7 Support</a></li>
-              <li><a href="#" className="text-primary-foreground/80 hover:text-secondary transition-colors">Insurance</a></li>
+              
             </ul>
           </div>
 
@@ -67,10 +65,7 @@ const Footer = () => {
               Subscribe to get the latest properties and offers.
             </p>
             <div className="space-y-3">
-              <Input
-                placeholder="Enter your email"
-                className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/60"
-              />
+              <Input placeholder="Enter your email" className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground placeholder:text-primary-foreground/60" />
               <Button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                 Subscribe
               </Button>
@@ -108,8 +103,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
