@@ -40,6 +40,11 @@ const PurchaseModal = ({ isOpen, onClose, item }: PurchaseModalProps) => {
       return;
     }
 
+    if (!item.created_by) {
+      toast.error("Unable to process purchase - seller information missing");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await createPurchase.mutateAsync({
