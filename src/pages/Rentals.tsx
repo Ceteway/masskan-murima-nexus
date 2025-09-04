@@ -13,7 +13,7 @@ import { locationData, allCounties } from "@/data/locations";
 // Mock data for properties
 const mockProperties = [
   {
-    id: "1",
+    id: "550e8400-e29b-41d4-a716-446655440001",
     title: "Spacious Family Home",
     location: "Nairobi West",
     price: 150000,
@@ -30,7 +30,7 @@ const mockProperties = [
     landlord_name: "John Doe",
   },
   {
-    id: "2",
+    id: "550e8400-e29b-41d4-a716-446655440002",
     title: "Modern Apartment in CBD",
     location: "Nairobi CBD",
     price: 80000,
@@ -46,7 +46,7 @@ const mockProperties = [
     agency_name: "Prime Properties",
   },
   {
-    id: "3",
+    id: "550e8400-e29b-41d4-a716-446655440003",
     title: "Cozy Studio Flat",
     location: "Westlands",
     price: 45000,
@@ -60,7 +60,7 @@ const mockProperties = [
     type: "Studio",
   },
   {
-    id: "4",
+    id: "550e8400-e29b-41d4-a716-446655440004",
     title: "Single Room",
     location: "Kasarani",
     price: 10000,
@@ -74,7 +74,7 @@ const mockProperties = [
     type: "Single",
   },
   {
-    id: "5",
+    id: "550e8400-e29b-41d4-a716-446655440005",
     title: "Bedsitter",
     location: "Roysambu",
     price: 15000,

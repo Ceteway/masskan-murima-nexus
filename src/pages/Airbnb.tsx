@@ -22,7 +22,7 @@ const Airbnb = () => {
   // Mock data for Airbnb properties
   const properties = [
     {
-      id: "1",
+      id: "550e8400-e29b-41d4-a716-446655440011",
       title: "Cozy Studio Near City Center",
       location: "Westlands, Nairobi",
       price: 12000,
@@ -36,7 +36,7 @@ const Airbnb = () => {
       type: "airbnb" as const
     },
     {
-      id: "2",
+      id: "550e8400-e29b-41d4-a716-446655440012",
       title: "Luxury Penthouse Suite",
       location: "Kilimani, Nairobi",
       price: 25000,
@@ -51,7 +51,7 @@ const Airbnb = () => {
       featured: true
     },
     {
-      id: "3",
+      id: "550e8400-e29b-41d4-a716-446655440013",
       title: "Modern Apartment with Pool",
       location: "Kileleshwa, Nairobi",
       price: 18000,
@@ -65,7 +65,7 @@ const Airbnb = () => {
       type: "airbnb" as const
     },
     {
-      id: "4",
+      id: "550e8400-e29b-41d4-a716-446655440014",
       title: "Charming Garden Villa",
       location: "Karen, Nairobi",
       price: 30000,
