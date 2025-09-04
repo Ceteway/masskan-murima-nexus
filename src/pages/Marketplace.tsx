@@ -29,7 +29,7 @@ const Marketplace = () => {
 
   const { data: marketplaceItems, isLoading, error, refetch } = useMarketplaceItems({
     search: searchTerm,
-    category: selectedCategory
+    category: selectedCategory === "all" ? "" : selectedCategory
   });
 
   if (isLoading) return <LoadingSpinner className="py-20" />;
@@ -81,7 +81,7 @@ const Marketplace = () => {
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     <SelectItem value="furniture">Furniture</SelectItem>
                     <SelectItem value="electronics">Electronics</SelectItem>
                     <SelectItem value="appliances">Appliances</SelectItem>
