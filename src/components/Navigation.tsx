@@ -62,14 +62,14 @@ const Navigation = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <img src="/lovable-uploads/8e06edac-8894-46c3-9b37-ceaa1e503c5e.png" alt="Masskan Rima Logo" className="h-8 w-auto" />
-            <span className="text-xl font-bold text-gray-800">Masskan Rima</span>
+            <span className="text-xl font-bold text-blue-950">Masskan Rima</span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             {navItems.map(item => <Link key={item.href} to={item.href} className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-accent/50"}`}>
                 <item.icon className="h-4 w-4" />
-                <span className="my-0 py-0 mx-0 px-0 text-slate-950 font-medium text-center">{item.label}</span>
+                <span className="my-0 py-0 mx-0 px-0 text-center text-blue-950 text-base font-semibold">{item.label}</span>
               </Link>)}
           </div>
 
