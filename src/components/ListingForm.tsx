@@ -21,8 +21,8 @@ const ListingForm = ({ type }: ListingFormProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState<any>({});
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const bucket = type === 'property' ? 'property-images' : 'marketplace-images';
@@ -31,11 +31,20 @@ const ListingForm = ({ type }: ListingFormProps) => {
   const createMarketplaceItem = useCreateMarketplaceItem();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      const newImages = [...images, ...files].slice(0, 6); // Maximum 6 images
+      const newPreviews = newImages.map(file => URL.createObjectURL(file));
+      setImages(newImages);
+      setImagePreviews(newPreviews);
     }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    setImages(newImages);
+    setImagePreviews(newPreviews);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -46,18 +55,22 @@ const ListingForm = ({ type }: ListingFormProps) => {
       return;
     }
 
-    if (!image) {
-      toast.error("Please upload an image");
+    if (images.length < 3) {
+      toast.error("Please upload at least 3 images");
       return;
     }
 
     try {
-      // Upload image
-      const imageUrl = await uploadImage(image);
+      // Upload all images
+      const imageUrls = await Promise.all(
+        images.map(image => uploadImage(image))
+      );
+      const primaryImageUrl = imageUrls[0];
 
       const listingData = {
         ...formData,
-        image: imageUrl,
+        image: primaryImageUrl,
+        images: imageUrls, // Store all image URLs
       };
 
       if (type === 'property') {
@@ -70,8 +83,8 @@ const ListingForm = ({ type }: ListingFormProps) => {
 
       setIsOpen(false);
       setFormData({});
-      setImage(null);
-      setImagePreview('');
+      setImages([]);
+      setImagePreviews([]);
     } catch (error: any) {
       toast.error(error.message || "Failed to create listing");
     }
@@ -94,26 +107,40 @@ const ListingForm = ({ type }: ListingFormProps) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Image Upload */}
+          {/* Multiple Image Upload */}
           <div className="space-y-2">
-            <Label>Image</Label>
-            <div 
-              className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {imagePreview ? (
-                <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
-              ) : (
-                <div className="space-y-2">
-                  <ImageIcon className="h-12 w-12 mx-auto text-muted-foreground" />
-                  <p className="text-muted-foreground">Click to upload image</p>
+            <Label>Property Images (At least 3 required)</Label>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+              {imagePreviews.map((preview, index) => (
+                <div key={index} className="relative">
+                  <img src={preview} alt={`Preview ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              {images.length < 6 && (
+                <div 
+                  className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-4 text-center cursor-pointer hover:border-muted-foreground/50 transition-colors h-32 flex flex-col justify-center"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <ImageIcon className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-xs text-muted-foreground">Add Image</p>
                 </div>
               )}
             </div>
+            <p className="text-sm text-muted-foreground">
+              Upload {images.length}/6 images (minimum 3 required)
+            </p>
             <input
               ref={fileInputRef}
               type="file"
               accept="image/*"
+              multiple
               onChange={handleImageChange}
               className="hidden"
             />
@@ -198,8 +225,6 @@ const ListingForm = ({ type }: ListingFormProps) => {
                       <SelectItem value="rental">Rental</SelectItem>
                       <SelectItem value="airbnb">Airbnb</SelectItem>
                       <SelectItem value="office">Office Space</SelectItem>
-                      <SelectItem value="apartment">Apartment</SelectItem>
-                      <SelectItem value="house">House</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -260,7 +285,7 @@ const ListingForm = ({ type }: ListingFormProps) => {
             </Button>
             <Button 
               type="submit" 
-              disabled={uploading || createProperty.isPending || createMarketplaceItem.isPending}
+              disabled={uploading || createProperty.isPending || createMarketplaceItem.isPending || (type === 'property' && images.length < 3)}
             >
               {uploading || createProperty.isPending || createMarketplaceItem.isPending ? (
                 <>

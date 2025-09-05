@@ -10,7 +10,8 @@ import { useUserPurchases } from '@/hooks/usePurchases';
 import { useUserQuotes } from '@/hooks/useQuotes';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ErrorMessage } from '@/components/ErrorMessage';
-import { Calendar, MapPin, Package, Home, Star, Clock, CheckCircle, XCircle, Truck } from 'lucide-react';
+import ListingForm from '@/components/ListingForm';
+import { Calendar, MapPin, Package, Home, Star, Clock, CheckCircle, XCircle, Truck, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 const Dashboard = () => {
@@ -50,13 +51,23 @@ const Dashboard = () => {
     <ProtectedRoute>
       <Layout>
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground mb-2">My Dashboard</h1>
-            <p className="text-muted-foreground">Track your bookings and purchases</p>
+          <div className="mb-8 flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">My Dashboard</h1>
+              <p className="text-muted-foreground">Track your bookings and purchases</p>
+            </div>
+            <div className="flex gap-2">
+              <ListingForm type="property" />
+              <ListingForm type="marketplace" />
+            </div>
           </div>
 
-          <Tabs defaultValue="bookings" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+          <Tabs defaultValue="listings" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="listings" className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                My Listings
+              </TabsTrigger>
               <TabsTrigger value="bookings" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
                 My Bookings
@@ -70,6 +81,40 @@ const Dashboard = () => {
                 Moving Quotes
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="listings" className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Home className="h-5 w-5" />
+                      Create Property Listing
+                    </CardTitle>
+                    <CardDescription>
+                      List your property for rent or sale
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ListingForm type="property" />
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Package className="h-5 w-5" />
+                      Create Marketplace Listing
+                    </CardTitle>
+                    <CardDescription>
+                      Sell items in the marketplace
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ListingForm type="marketplace" />
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
 
             <TabsContent value="bookings" className="space-y-6">
               <Card>
