@@ -45,6 +45,7 @@ export const useCreateProperty = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties"] });
+      queryClient.invalidateQueries({ queryKey: ["user_properties"] });
     },
   });
 };
@@ -99,6 +100,7 @@ export const useCreateMarketplaceItem = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["marketplace_items"] });
+      queryClient.invalidateQueries({ queryKey: ["user_marketplace_items"] });
     },
   });
 };
