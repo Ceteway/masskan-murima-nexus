@@ -255,6 +255,7 @@ export type Database = {
           featured: boolean | null
           id: string
           image: string
+          images: Json | null
           landlord_name: string | null
           landlord_verified: boolean | null
           location: string
@@ -278,6 +279,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image: string
+          images?: Json | null
           landlord_name?: string | null
           landlord_verified?: boolean | null
           location: string
@@ -301,6 +303,7 @@ export type Database = {
           featured?: boolean | null
           id?: string
           image?: string
+          images?: Json | null
           landlord_name?: string | null
           landlord_verified?: boolean | null
           location?: string
