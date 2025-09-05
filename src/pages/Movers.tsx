@@ -215,7 +215,7 @@ const Movers = () => {
           ) : movingServices && movingServices.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {movingServices.map((service) => (
-                <MovingServiceCard key={service.id} {...service} />
+                <MovingServiceCard key={service.id} service={service} />
               ))}
             </div>
           ) : (

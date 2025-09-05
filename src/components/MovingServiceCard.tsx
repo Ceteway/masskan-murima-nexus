@@ -2,26 +2,16 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, MapPin, Truck, CheckCircle } from 'lucide-react';
+import { Star, MapPin, Truck, CheckCircle, ChevronDown } from 'lucide-react';
 import { MovingService } from '@/hooks/useMovingServices';
-import QuoteModal from './QuoteModal';
+import SimpleQuoteModal from './SimpleQuoteModal';
 
-interface MovingServiceCardProps extends MovingService {
+interface MovingServiceCardProps {
+  service: MovingService;
   className?: string;
 }
 
-const MovingServiceCard = ({ 
-  id, 
-  name, 
-  rating, 
-  reviews, 
-  location, 
-  services, 
-  price_range, 
-  verified, 
-  image,
-  className = ""
-}: MovingServiceCardProps) => {
+const MovingServiceCard = ({ service, className = "" }: MovingServiceCardProps) => {
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
 
   return (
@@ -31,15 +21,15 @@ const MovingServiceCard = ({
           {/* Image */}
           <div className="relative overflow-hidden">
             <img
-              src={image || '/hero-movers.png'}
-              alt={name}
+              src={service.image || '/hero-movers.png'}
+              alt={service.name}
               className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src = '/hero-movers.png';
               }}
             />
-            {verified && (
+            {service.verified && (
               <Badge className="absolute top-3 right-3 bg-green-100 text-green-800">
                 <CheckCircle className="h-3 w-3 mr-1" />
                 Verified
@@ -50,10 +40,10 @@ const MovingServiceCard = ({
           <div className="p-4">
             {/* Header */}
             <div className="mb-3">
-              <h3 className="font-semibold text-lg mb-1 line-clamp-1">{name}</h3>
+              <h3 className="font-semibold text-lg mb-1 line-clamp-1">{service.name}</h3>
               <div className="flex items-center text-muted-foreground text-sm">
                 <MapPin className="h-4 w-4 mr-1" />
-                <span className="line-clamp-1">{location}</span>
+                <span className="line-clamp-1">{service.location}</span>
               </div>
             </div>
 
@@ -61,9 +51,9 @@ const MovingServiceCard = ({
             <div className="flex items-center mb-3">
               <div className="flex items-center">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400 mr-1" />
-                <span className="font-medium">{rating}</span>
+                <span className="font-medium">{service.rating}</span>
                 <span className="text-muted-foreground text-sm ml-1">
-                  ({reviews} reviews)
+                  ({service.reviews} reviews)
                 </span>
               </div>
             </div>
@@ -75,14 +65,14 @@ const MovingServiceCard = ({
                 <span className="text-sm font-medium">Services:</span>
               </div>
               <div className="flex flex-wrap gap-1">
-                {services.slice(0, 3).map((service, index) => (
+                {service.services.slice(0, 3).map((serviceItem, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
-                    {service}
+                    {serviceItem}
                   </Badge>
                 ))}
-                {services.length > 3 && (
+                {service.services.length > 3 && (
                   <Badge variant="secondary" className="text-xs">
-                    +{services.length - 3} more
+                    +{service.services.length - 3} more
                   </Badge>
                 )}
               </div>
@@ -90,7 +80,7 @@ const MovingServiceCard = ({
 
             {/* Price Range */}
             <div className="text-lg font-bold text-primary mb-3">
-              {price_range}
+              {service.price_range}
             </div>
           </div>
         </CardContent>
@@ -100,24 +90,17 @@ const MovingServiceCard = ({
             className="w-full bg-gradient-primary flex items-center justify-center gap-2" 
             onClick={() => setIsQuoteModalOpen(true)}
           >
-            Get Quote
-            <svg 
-              className="w-4 h-4" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
+            Get Quick Quote
+            <ChevronDown className="w-4 h-4" />
           </Button>
         </CardFooter>
       </Card>
 
-      <QuoteModal
+      <SimpleQuoteModal
         isOpen={isQuoteModalOpen}
         onClose={() => setIsQuoteModalOpen(false)}
-        serviceId={id}
-        serviceName={name}
+        serviceId={service.id}
+        serviceName={service.name}
       />
     </>
   );
