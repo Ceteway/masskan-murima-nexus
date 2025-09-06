@@ -111,12 +111,22 @@ const Navigation = () => {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    {isAdmin && <DropdownMenuItem asChild>
-                        <Link to="/admin" className="cursor-pointer">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Admin
-                        </Link>
-                      </DropdownMenuItem>}
+                    {isAdmin && (
+                      <>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin" className="cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            Admin View
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link to="/admin-dashboard" className="cursor-pointer">
+                            <Settings className="mr-2 h-4 w-4" />
+                            Admin Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                       <LogOut className="mr-2 h-4 w-4" />
@@ -170,12 +180,22 @@ const Navigation = () => {
                           Dashboard
                         </Link>
                       </Button>
-                      {isAdmin && <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                          <Link to="/admin" onClick={() => setIsOpen(false)}>
-                            <Settings className="mr-2 h-4 w-4" />
-                            Admin
-                          </Link>
-                        </Button>}
+                      {isAdmin && (
+                        <>
+                          <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                            <Link to="/admin" onClick={() => setIsOpen(false)}>
+                              <Settings className="mr-2 h-4 w-4" />
+                              Admin View
+                            </Link>
+                          </Button>
+                          <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                            <Link to="/admin-dashboard" onClick={() => setIsOpen(false)}>
+                              <Settings className="mr-2 h-4 w-4" />
+                              Admin Dashboard
+                            </Link>
+                          </Button>
+                        </>
+                      )}
                       <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => {
                     signOut();
                     setIsOpen(false);
