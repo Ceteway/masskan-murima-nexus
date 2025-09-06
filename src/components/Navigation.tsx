@@ -8,7 +8,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useProfile } from "@/hooks/useProfile";
-import ListingForm from "@/components/ListingForm";
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -16,9 +15,6 @@ const Navigation = () => {
     user,
     signOut
   } = useAuth();
-  const {
-    isAdmin
-  } = useAdminAccess();
   const {
     data: profile
   } = useProfile();
@@ -76,8 +72,6 @@ const Navigation = () => {
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center space-x-2">
             {user ? <>
-                <ListingForm type="property" />
-                <ListingForm type="marketplace" />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm" className="relative h-8 w-8 rounded-full">
@@ -111,22 +105,6 @@ const Navigation = () => {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    {isAdmin && (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin" className="cursor-pointer">
-                            <Settings className="mr-2 h-4 w-4" />
-                            Admin View
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link to="/admin-dashboard" className="cursor-pointer">
-                            <Settings className="mr-2 h-4 w-4" />
-                            Admin Dashboard
-                          </Link>
-                        </DropdownMenuItem>
-                      </>
-                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                       <LogOut className="mr-2 h-4 w-4" />
@@ -164,10 +142,6 @@ const Navigation = () => {
                         <p className="text-sm font-medium">{profile?.full_name || "User"}</p>
                         <p className="text-xs text-muted-foreground">{user.email}</p>
                       </div>
-                      <div className="space-y-2">
-                        <ListingForm type="property" />
-                        <ListingForm type="marketplace" />
-                      </div>
                       <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
                         <Link to="/profile" onClick={() => setIsOpen(false)}>
                           <User className="mr-2 h-4 w-4" />
@@ -180,22 +154,6 @@ const Navigation = () => {
                           Dashboard
                         </Link>
                       </Button>
-                      {isAdmin && (
-                        <>
-                          <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                            <Link to="/admin" onClick={() => setIsOpen(false)}>
-                              <Settings className="mr-2 h-4 w-4" />
-                              Admin View
-                            </Link>
-                          </Button>
-                          <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                            <Link to="/admin-dashboard" onClick={() => setIsOpen(false)}>
-                              <Settings className="mr-2 h-4 w-4" />
-                              Admin Dashboard
-                            </Link>
-                          </Button>
-                        </>
-                      )}
                       <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => {
                     signOut();
                     setIsOpen(false);
