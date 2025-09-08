@@ -21,6 +21,8 @@ export interface PropertyListing {
   agency_verified?: boolean;
   reviews?: number;
   rating?: number;
+  images?: string[];
+  images?: string[];
 }
 
 export const useCreateProperty = () => {
@@ -35,7 +37,9 @@ export const useCreateProperty = () => {
         .from("properties")
         .insert({
           ...property,
-          created_by: user.id
+          created_by: user.id,
+          rating: property.rating || 4.5,
+          reviews: property.reviews || 0
         })
         .select()
         .single();

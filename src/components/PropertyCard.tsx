@@ -22,6 +22,7 @@ interface PropertyCardProps {
   managed_by?: string;
   landlord_name?: string;
   agency_name?: string;
+  image?: string; // Keep for backward compatibility
 }
 
 const PropertyCard = ({ 
@@ -41,33 +42,35 @@ const PropertyCard = ({
   managed_by,
   landlord_name,
   agency_name
+  image // Add image prop for backward compatibility
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  console.log({ title, images, managed_by, landlord_name, agency_name });
+  // Use images array if available, otherwise fall back to single image
+  const displayImages = images && images.length > 0 ? images : (image ? [image] : []);
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
       {/* Image Container */}
       <div className="relative overflow-hidden">
         <img
-          src={images && images.length > 0 ? images[0] : `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`}
+          src={displayImages.length > 0 ? displayImages[0] : `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`}
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
         {/* Multiple Images Indicator */}
-        {images && images.length > 1 && (
+        {displayImages.length > 1 && (
           <div className="absolute bottom-3 left-3 flex gap-1">
-            {images.slice(0, 3).map((_, index) => (
+            {displayImages.slice(0, 3).map((_, index) => (
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'}`}
               />
             ))}
-            {images.length > 3 && (
+            {displayImages.length > 3 && (
               <div className="text-white text-xs font-medium ml-1">
-                +{images.length - 3}
+                +{displayImages.length - 3}
               </div>
             )}
           </div>

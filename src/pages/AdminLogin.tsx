@@ -95,7 +95,7 @@ const AdminLogin = () => {
                 <Input
                     id="email"
                     type="email"
-                    placeholder="samuelresearchafrica@gmail.com"
+                    placeholder="samuelresearch@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-4"
