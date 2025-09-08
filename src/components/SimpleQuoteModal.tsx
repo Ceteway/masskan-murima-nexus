@@ -61,7 +61,7 @@ const SimpleQuoteModal = ({ isOpen, onClose, serviceId, serviceName }: SimpleQuo
         setToLocation('');
         setDate('');
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         toast.error('Failed to send quote request. Please try again.');
         console.error('Quote submission error:', error);
       },

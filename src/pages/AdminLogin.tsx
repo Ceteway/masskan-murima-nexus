@@ -21,14 +21,16 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/admin-dashboard';
+  const from = location.state?.from?.pathname || '/admin/dashboard';
 
   useEffect(() => {
-    if (user && !isLoading && isAdmin) {
-      navigate(from, { replace: true });
-    } else if (user && !isLoading && !isAdmin) {
-      toast.error('Access denied. Admin privileges required.');
-      navigate('/', { replace: true });
+    if (user && !isLoading) {
+      if (isAdmin) {
+        navigate(from, { replace: true });
+      } else {
+        toast.error('Access denied. Admin privileges required.');
+        navigate('/', { replace: true });
+      }
     }
   }, [user, isAdmin, isLoading, navigate, from]);
 
@@ -90,10 +92,10 @@ const AdminLogin = () => {
                   Admin Email
                 </Label>
                 <div className="relative">
-                  <Input
+                <Input
                     id="email"
                     type="email"
-                    placeholder="admin@masskanrima.com"
+                    placeholder="samuelresearchafrica@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="pl-4"

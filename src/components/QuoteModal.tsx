@@ -63,7 +63,7 @@ const QuoteModal = ({ isOpen, onClose, serviceId, serviceName }: QuoteModalProps
         setMovingDate('');
         setInventory('');
       },
-      onError: (error: any) => {
+      onError: (error: unknown) => {
         toast.error('Failed to submit quote request. Please try again.');
         console.error('Quote submission error:', error);
       },

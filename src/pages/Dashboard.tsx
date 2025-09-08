@@ -1,20 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useUserBookings } from '@/hooks/useBookings';
 import { useUserPurchases } from '@/hooks/usePurchases';
 import { useUserQuotes } from '@/hooks/useQuotes';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { ErrorMessage } from '@/components/ErrorMessage';
-import ListingForm from '@/components/ListingForm';
-import { Calendar, MapPin, Package, Home, Star, Clock, CheckCircle, XCircle, Truck, Plus } from 'lucide-react';
+import { Calendar, MapPin, Package, Home, Clock, CheckCircle, XCircle, Truck, Briefcase } from 'lucide-react';
 import { format } from 'date-fns';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/hooks/useProfile';
+
+const StatCard = ({ title, value, icon: Icon, description }: { title: string, value: number | string, icon: React.ElementType, description: string }) => (
+  <Card>
+    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardTitle className="text-sm font-medium">{title}</CardTitle>
+      <Icon className="h-4 w-4 text-muted-foreground" />
+    </CardHeader>
+    <CardContent>
+      <div className="text-2xl font-bold">{value}</div>
+      <p className="text-xs text-muted-foreground">{description}</p>
+    </CardContent>
+  </Card>
+);
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
   const { data: bookings, isLoading: bookingsLoading, error: bookingsError, refetch: refetchBookings } = useUserBookings();
   const { data: purchases, isLoading: purchasesLoading, error: purchasesError, refetch: refetchPurchases } = useUserPurchases();
   const { data: quotes, isLoading: quotesLoading, error: quotesError, refetch: refetchQuotes } = useUserQuotes();
@@ -36,312 +51,156 @@ const Dashboard = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400';
       case 'confirmed':
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
+
+  const totalBookings = bookings?.length || 0;
+  const totalPurchases = purchases?.length || 0;
+  const totalQuotes = quotes?.length || 0;
 
   return (
     <ProtectedRoute>
       <Layout>
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8 flex justify-between items-start">
-            <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">My Dashboard</h1>
-              <p className="text-muted-foreground">Track your bookings and purchases</p>
-            </div>
-            <div className="flex gap-2">
-              <ListingForm type="property" />
-              <ListingForm type="marketplace" />
-            </div>
+        <div className="container mx-auto px-4 py-8 bg-gradient-to-b from-background to-muted/20 min-h-screen">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground">Welcome back, {profile?.full_name || user?.email}!</h1>
+            <p className="text-muted-foreground">Here's a summary of your activity.</p>
           </div>
 
-          <Tabs defaultValue="listings" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="listings" className="flex items-center gap-2">
-                <Plus className="h-4 w-4" />
-                My Listings
-              </TabsTrigger>
-              <TabsTrigger value="bookings" className="flex items-center gap-2">
-                <Home className="h-4 w-4" />
-                My Bookings
-              </TabsTrigger>
-              <TabsTrigger value="purchases" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                My Purchases
-              </TabsTrigger>
-              <TabsTrigger value="quotes" className="flex items-center gap-2">
-                <Truck className="h-4 w-4" />
-                Moving Quotes
-              </TabsTrigger>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+            <StatCard title="Total Bookings" value={totalBookings} icon={Home} description="Your property reservations" />
+            <StatCard title="Total Purchases" value={totalPurchases} icon={Package} description="Items from the marketplace" />
+            <StatCard title="Moving Quotes" value={totalQuotes} icon={Truck} description="Your requested quotes" />
+          </div>
+
+          <Tabs defaultValue="bookings" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="bookings" className="flex items-center gap-2"><Home className="h-4 w-4" />My Bookings</TabsTrigger>
+              <TabsTrigger value="purchases" className="flex items-center gap-2"><Package className="h-4 w-4" />My Purchases</TabsTrigger>
+              <TabsTrigger value="quotes" className="flex items-center gap-2"><Truck className="h-4 w-4" />Moving Quotes</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="listings" className="space-y-6">
-              <div className="grid gap-6 md:grid-cols-2">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Home className="h-5 w-5" />
-                      Create Property Listing
-                    </CardTitle>
-                    <CardDescription>
-                      List your property for rent or sale
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ListingForm type="property" />
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Package className="h-5 w-5" />
-                      Create Marketplace Listing
-                    </CardTitle>
-                    <CardDescription>
-                      Sell items in the marketplace
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ListingForm type="marketplace" />
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="bookings" className="space-y-6">
+            <TabsContent value="bookings">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Home className="h-5 w-5" />
-                    Property Bookings
-                  </CardTitle>
-                  <CardDescription>
-                    View and manage your rental and Airbnb bookings
-                  </CardDescription>
+                  <CardTitle>Property Bookings</CardTitle>
+                  <CardDescription>Your rental and Airbnb bookings.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {bookingsLoading ? (
-                    <LoadingSpinner />
-                  ) : bookingsError ? (
-                    <ErrorMessage onRetry={() => refetchBookings()} />
-                  ) : bookings && bookings.length > 0 ? (
-                    <div className="space-y-4">
-                      {bookings.map((booking) => (
-                        <Card key={booking.id} className="border-l-4 border-l-primary">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {booking.property?.image && (
-                                  <img
-                                    src={booking.property.image}
-                                    alt={booking.property.title}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {booking.property?.title || 'Property'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <MapPin className="h-4 w-4" />
-                                    {booking.property?.location}
-                                  </div>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Calendar className="h-4 w-4" />
-                                    {format(new Date(booking.booking_date), 'PPP')}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    Guest: {booking.guest_name} • {booking.guest_email}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-2">
-                                <Badge className={getStatusColor(booking.status)}>
-                                  <div className="flex items-center gap-1">
-                                    {getStatusIcon(booking.status)}
-                                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                                  </div>
-                                </Badge>
-                                <div className="text-sm text-muted-foreground">
-                                  Booked {format(new Date(booking.created_at), 'MMM dd, yyyy')}
-                                </div>
-                              </div>
+                  {bookingsLoading ? <LoadingSpinner /> : bookingsError ? <ErrorMessage onRetry={refetchBookings} /> : (
+                    bookings && bookings.length > 0 ? (
+                      <div className="space-y-4">
+                        {bookings.map((booking) => (
+                          <div key={booking.id} className="p-4 border rounded-lg flex items-start gap-4 hover:bg-muted/50 transition-colors">
+                            <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0">
+                              {booking.property?.image && <img src={booking.property.image} alt={booking.property.title} className="w-full h-full object-cover rounded-lg" />}
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Home className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No bookings yet</p>
-                      <p className="text-sm text-muted-foreground">Your property bookings will appear here</p>
-                    </div>
+                            <div className="flex-grow">
+                              <h3 className="font-semibold">{booking.property?.title || 'Property'}</h3>
+                              <p className="text-sm text-muted-foreground flex items-center gap-2"><MapPin className="h-3 w-3" />{booking.property?.location}</p>
+                              <p className="text-sm text-muted-foreground flex items-center gap-2"><Calendar className="h-3 w-3" />{format(new Date(booking.booking_date), 'PPP')}</p>
+                            </div>
+                            <div className="text-right">
+                              <Badge className={getStatusColor(booking.status)}>{booking.status}</Badge>
+                              <p className="text-xs text-muted-foreground mt-2">Booked on {format(new Date(booking.created_at), 'MMM dd, yyyy')}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <Briefcase className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-semibold">No bookings yet</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">You haven't booked any properties yet.</p>
+                      </div>
+                    )
                   )}
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="purchases" className="space-y-6">
+            <TabsContent value="purchases">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
-                    Marketplace Purchases
-                  </CardTitle>
-                  <CardDescription>
-                    Track your marketplace item purchases
-                  </CardDescription>
+                  <CardTitle>Marketplace Purchases</CardTitle>
+                  <CardDescription>Items you've purchased from the marketplace.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {purchasesLoading ? (
-                    <LoadingSpinner />
-                  ) : purchasesError ? (
-                    <ErrorMessage onRetry={() => refetchPurchases()} />
-                  ) : purchases && purchases.length > 0 ? (
-                    <div className="space-y-4">
-                      {purchases.map((purchase) => (
-                        <Card key={purchase.id} className="border-l-4 border-l-secondary">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {purchase.item?.image && (
-                                  <img
-                                    src={purchase.item.image}
-                                    alt={purchase.item.title}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {purchase.item?.title || 'Item'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Package className="h-4 w-4" />
-                                    {purchase.item?.category}
-                                  </div>
-                                  <div className="text-lg font-bold text-primary mb-2">
-                                    KSh {purchase.purchase_price.toLocaleString()}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    Buyer: {purchase.buyer_name} • {purchase.buyer_email}
-                                  </div>
-                                  {purchase.delivery_address && (
-                                    <div className="text-sm text-muted-foreground mt-1">
-                                      Delivery: {purchase.delivery_address}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-2">
-                                <Badge className={getStatusColor(purchase.status)}>
-                                  <div className="flex items-center gap-1">
-                                    {getStatusIcon(purchase.status)}
-                                    {purchase.status.charAt(0).toUpperCase() + purchase.status.slice(1)}
-                                  </div>
-                                </Badge>
-                                <div className="text-sm text-muted-foreground">
-                                  Purchased {format(new Date(purchase.created_at), 'MMM dd, yyyy')}
-                                </div>
-                              </div>
+                  {purchasesLoading ? <LoadingSpinner /> : purchasesError ? <ErrorMessage onRetry={refetchPurchases} /> : (
+                    purchases && purchases.length > 0 ? (
+                      <div className="space-y-4">
+                        {purchases.map((purchase) => (
+                          <div key={purchase.id} className="p-4 border rounded-lg flex items-start gap-4 hover:bg-muted/50 transition-colors">
+                            <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0">
+                              {purchase.item?.image && <img src={purchase.item.image} alt={purchase.item.title} className="w-full h-full object-cover rounded-lg" />}
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No purchases yet</p>
-                      <p className="text-sm text-muted-foreground">Your marketplace purchases will appear here</p>
-                    </div>
+                            <div className="flex-grow">
+                              <h3 className="font-semibold">{purchase.item?.title || 'Item'}</h3>
+                              <p className="text-sm text-muted-foreground">{purchase.item?.category}</p>
+                              <p className="font-bold text-primary mt-1">KSh {purchase.purchase_price.toLocaleString()}</p>
+                            </div>
+                            <div className="text-right">
+                              <Badge className={getStatusColor(purchase.status)}>{purchase.status}</Badge>
+                              <p className="text-xs text-muted-foreground mt-2">Purchased on {format(new Date(purchase.created_at), 'MMM dd, yyyy')}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <Briefcase className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-semibold">No purchases yet</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">You haven't purchased any items yet.</p>
+                      </div>
+                    )
                   )}
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="quotes" className="space-y-6">
+            <TabsContent value="quotes">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5" />
-                    Moving Quotes
-                  </CardTitle>
-                  <CardDescription>
-                    Track your moving service quote requests
-                  </CardDescription>
+                  <CardTitle>Moving Quotes</CardTitle>
+                  <CardDescription>Your requested quotes for moving services.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {quotesLoading ? (
-                    <LoadingSpinner />
-                  ) : quotesError ? (
-                    <ErrorMessage onRetry={() => refetchQuotes()} />
-                  ) : quotes && quotes.length > 0 ? (
-                    <div className="space-y-4">
-                      {quotes.map((quote) => (
-                        <Card key={quote.id} className="border-l-4 border-l-accent">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {quote.service?.image && (
-                                  <img
-                                    src={quote.service.image}
-                                    alt={quote.service.name}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {quote.service?.name || 'Moving Service'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <MapPin className="h-4 w-4" />
-                                    {quote.pickup_location} → {quote.delivery_location}
-                                  </div>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Calendar className="h-4 w-4" />
-                                    {format(new Date(quote.moving_date), 'PPP')}
-                                  </div>
-                                  <div className="text-sm text-muted-foreground">
-                                    Client: {quote.client_name} • {quote.client_email}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-2">
-                                <Badge className={getStatusColor(quote.status)}>
-                                  <div className="flex items-center gap-1">
-                                    {getStatusIcon(quote.status)}
-                                    {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
-                                  </div>
-                                </Badge>
-                                {quote.quote_amount && (
-                                  <div className="text-lg font-bold text-primary">
-                                    KSh {quote.quote_amount.toLocaleString()}
-                                  </div>
-                                )}
-                                <div className="text-sm text-muted-foreground">
-                                  Requested {format(new Date(quote.created_at), 'MMM dd, yyyy')}
-                                </div>
-                              </div>
+                  {quotesLoading ? <LoadingSpinner /> : quotesError ? <ErrorMessage onRetry={refetchQuotes} /> : (
+                    quotes && quotes.length > 0 ? (
+                      <div className="space-y-4">
+                        {quotes.map((quote) => (
+                          <div key={quote.id} className="p-4 border rounded-lg flex items-start gap-4 hover:bg-muted/50 transition-colors">
+                            <div className="w-16 h-16 rounded-lg bg-muted flex-shrink-0">
+                              {quote.service?.image && <img src={quote.service.image} alt={quote.service.name} className="w-full h-full object-cover rounded-lg" />}
                             </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No quotes yet</p>
-                      <p className="text-sm text-muted-foreground">Your moving service quotes will appear here</p>
-                    </div>
+                            <div className="flex-grow">
+                              <h3 className="font-semibold">{quote.service?.name || 'Moving Service'}</h3>
+                              <p className="text-sm text-muted-foreground flex items-center gap-2"><MapPin className="h-3 w-3" />{quote.pickup_location} to {quote.delivery_location}</p>
+                              <p className="text-sm text-muted-foreground flex items-center gap-2"><Calendar className="h-3 w-3" />Moving on {format(new Date(quote.moving_date), 'PPP')}</p>
+                              {quote.quote_amount && <p className="font-bold text-primary mt-1">Quoted: KSh {quote.quote_amount.toLocaleString()}</p>}
+                            </div>
+                            <div className="text-right">
+                              <Badge className={getStatusColor(quote.status)}>{quote.status}</Badge>
+                              <p className="text-xs text-muted-foreground mt-2">Requested on {format(new Date(quote.created_at), 'MMM dd, yyyy')}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12">
+                        <Briefcase className="mx-auto h-12 w-12 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-semibold">No quotes yet</h3>
+                        <p className="mt-1 text-sm text-muted-foreground">You haven't requested any moving quotes yet.</p>
+                      </div>
+                    )
                   )}
                 </CardContent>
               </Card>

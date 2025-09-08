@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import Layout from '@/components/Layout';
-import AdminRoute from '@/components/AdminRoute';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -19,10 +17,39 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import ListingForm from '@/components/ListingForm';
+import UserManagement from '@/components/UserManagement';
+import MovingServiceForm from '@/components/MovingServiceForm';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [selectedTab, setSelectedTab] = useState('overview');
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Sync selected tab from URL on load/change
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab && tab !== selectedTab) {
+      setSelectedTab(tab);
+    }
+    if (!tab && selectedTab) {
+      // ensure URL contains the current tab for shareable links
+      const next = new URLSearchParams(location.search);
+      next.set('tab', selectedTab);
+      navigate({ pathname: location.pathname, search: next.toString() }, { replace: true });
+    }
+  }, [location.search]);
+
+  // Update URL when tab changes
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('tab') !== selectedTab) {
+      params.set('tab', selectedTab);
+      navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+    }
+  }, [selectedTab]);
 
   // Fetch all data for admin overview
   const { data: bookings, isLoading: bookingsLoading } = useQuery({
@@ -143,11 +170,11 @@ const AdminDashboard = () => {
 
   const updateQuoteStatus = useMutation({
     mutationFn: async ({ id, status, quote_amount }: { id: string; status: string; quote_amount?: number }) => {
-      const updateData: any = { status };
+      const updateData: { status: string; quote_amount?: number } = { status };
       if (quote_amount !== undefined) {
         updateData.quote_amount = quote_amount;
       }
-      
+
       const { error } = await supabase
         .from("mover_quotes")
         .update(updateData)
@@ -248,7 +275,7 @@ const AdminDashboard = () => {
     );
   };
 
-  const OverviewCard = ({ title, count, icon: Icon, description }: any) => (
+  const OverviewCard = ({ title, count, icon: Icon, description }: { title: string; count?: number; icon: React.ComponentType<{ className?: string }>; description: string }) => (
     <Card>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
@@ -264,9 +291,7 @@ const AdminDashboard = () => {
   );
 
   return (
-    <AdminRoute>
-      <Layout>
-        <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-2">
               <ShieldCheck className="h-8 w-8 text-primary" />
@@ -363,276 +388,11 @@ const AdminDashboard = () => {
                     <div className="space-y-3">
                       <ListingForm type="property" />
                       <ListingForm type="marketplace" />
-                      <Button variant="outline" className="w-full justify-start">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Moving Service
-                      </Button>
+                      <MovingServiceForm />
                     </div>
                   </CardContent>
                 </Card>
               </div>
-            </TabsContent>
-
-            <TabsContent value="bookings" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Home className="h-5 w-5" />
-                    Property Bookings Management
-                  </CardTitle>
-                  <CardDescription>
-                    Manage all property bookings and reservations
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {bookingsLoading ? (
-                    <LoadingSpinner />
-                  ) : bookings && bookings.length > 0 ? (
-                    <div className="space-y-4">
-                      {bookings.map((booking) => (
-                        <Card key={booking.id} className="border-l-4 border-l-primary">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {booking.properties?.image && (
-                                  <img
-                                    src={booking.properties.image}
-                                    alt={booking.properties.title}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {booking.properties?.title || 'Property'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <MapPin className="h-4 w-4" />
-                                    {booking.properties?.location}
-                                  </div>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Calendar className="h-4 w-4" />
-                                    {format(new Date(booking.booking_date), 'PPP')}
-                                  </div>
-                                  <div className="text-sm space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <User className="h-4 w-4" />
-                                      {booking.guest_name}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Mail className="h-4 w-4" />
-                                      {booking.guest_email}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="h-4 w-4" />
-                                      {booking.guest_phone}
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-3">
-                                <Badge className={getStatusColor(booking.status)}>
-                                  {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                                </Badge>
-                                <div className="text-sm text-muted-foreground">
-                                  {format(new Date(booking.created_at), 'MMM dd, yyyy')}
-                                </div>
-                                <QuickActions 
-                                  type="booking" 
-                                  id={booking.id} 
-                                  currentStatus={booking.status} 
-                                />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Home className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No bookings yet</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="purchases" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Package className="h-5 w-5" />
-                    Marketplace Purchases Management
-                  </CardTitle>
-                  <CardDescription>
-                    Manage all marketplace purchases and orders
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {purchasesLoading ? (
-                    <LoadingSpinner />
-                  ) : purchases && purchases.length > 0 ? (
-                    <div className="space-y-4">
-                      {purchases.map((purchase) => (
-                        <Card key={purchase.id} className="border-l-4 border-l-secondary">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {purchase.marketplace_items?.image && (
-                                  <img
-                                    src={purchase.marketplace_items.image}
-                                    alt={purchase.marketplace_items.title}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {purchase.marketplace_items?.title || 'Item'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Package className="h-4 w-4" />
-                                    {purchase.marketplace_items?.category}
-                                  </div>
-                                  <div className="text-lg font-bold text-primary mb-2">
-                                    KSh {purchase.purchase_price.toLocaleString()}
-                                  </div>
-                                  <div className="text-sm space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <User className="h-4 w-4" />
-                                      {purchase.buyer_name}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Mail className="h-4 w-4" />
-                                      {purchase.buyer_email}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="h-4 w-4" />
-                                      {purchase.buyer_phone}
-                                    </div>
-                                    {purchase.delivery_address && (
-                                      <div className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4" />
-                                        {purchase.delivery_address}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-3">
-                                <Badge className={getStatusColor(purchase.status)}>
-                                  {purchase.status.charAt(0).toUpperCase() + purchase.status.slice(1)}
-                                </Badge>
-                                <div className="text-sm text-muted-foreground">
-                                  {format(new Date(purchase.created_at), 'MMM dd, yyyy')}
-                                </div>
-                                <QuickActions 
-                                  type="purchase" 
-                                  id={purchase.id} 
-                                  currentStatus={purchase.status} 
-                                />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No purchases yet</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="quotes" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5" />
-                    Moving Quotes Management
-                  </CardTitle>
-                  <CardDescription>
-                    Manage all moving service quotes and requests
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {quotesLoading ? (
-                    <LoadingSpinner />
-                  ) : quotes && quotes.length > 0 ? (
-                    <div className="space-y-4">
-                      {quotes.map((quote) => (
-                        <Card key={quote.id} className="border-l-4 border-l-accent">
-                          <CardContent className="p-4">
-                            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                {quote.moving_services?.image && (
-                                  <img
-                                    src={quote.moving_services.image}
-                                    alt={quote.moving_services.name}
-                                    className="w-16 h-16 rounded-lg object-cover"
-                                  />
-                                )}
-                                <div className="flex-1">
-                                  <h3 className="font-semibold text-lg">
-                                    {quote.moving_services?.name || 'Moving Service'}
-                                  </h3>
-                                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                                    <Calendar className="h-4 w-4" />
-                                    {format(new Date(quote.moving_date), 'PPP')}
-                                  </div>
-                                  <div className="text-sm space-y-1">
-                                    <div className="flex items-center gap-2">
-                                      <User className="h-4 w-4" />
-                                      {quote.client_name}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Mail className="h-4 w-4" />
-                                      {quote.client_email}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <Phone className="h-4 w-4" />
-                                      {quote.client_phone}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      <MapPin className="h-4 w-4" />
-                                      {quote.pickup_location} → {quote.delivery_location}
-                                    </div>
-                                    {quote.quote_amount && (
-                                      <div className="text-lg font-bold text-primary">
-                                        KSh {quote.quote_amount.toLocaleString()}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex flex-col items-end gap-3">
-                                <Badge className={getStatusColor(quote.status)}>
-                                  {quote.status.charAt(0).toUpperCase() + quote.status.slice(1)}
-                                </Badge>
-                                <div className="text-sm text-muted-foreground">
-                                  {format(new Date(quote.created_at), 'MMM dd, yyyy')}
-                                </div>
-                                <QuickActions 
-                                  type="quote" 
-                                  id={quote.id} 
-                                  currentStatus={quote.status} 
-                                />
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Truck className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No quotes yet</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
             </TabsContent>
 
             <TabsContent value="listings" className="space-y-6">
@@ -654,6 +414,15 @@ const AdminDashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <ListingForm type="marketplace" />
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Create Moving Service</CardTitle>
+                    <CardDescription>Add new moving services</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <MovingServiceForm />
                   </CardContent>
                 </Card>
               </div>
@@ -686,28 +455,16 @@ const AdminDashboard = () => {
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <UserCog className="h-5 w-5" />
-                    User Management
-                  </CardTitle>
-                  <CardDescription>
-                    Manage user accounts and permissions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <UserCog className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">User management features coming soon</p>
-                  </div>
-                </CardContent>
-              </Card>
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">User Administration</h2>
+                <Button variant="outline" onClick={() => (window.location.href = '/admin/moderator')}>
+                  Go to Moderator Dashboard
+                </Button>
+              </div>
+              <UserManagement />
             </TabsContent>
           </Tabs>
         </div>
-      </Layout>
-    </AdminRoute>
   );
 };
 

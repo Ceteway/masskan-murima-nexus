@@ -17,11 +17,11 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 217 91.2% 59.8%; /* A vibrant blue */
+    --primary: 217 91.2% 35%; /* A dark blue */
     --primary-foreground: 0 0% 98%; /* White for text on primary */
-    
-    --primary-light: 217 91.2% 65%; /* Lighter shade of primary */
-    --primary-dark: 217 91.2% 50%; /* Darker shade of primary */
+
+    --primary-light: 217 91.2% 45%; /* Lighter shade of primary */
+    --primary-dark: 217 91.2% 25%; /* Darker shade of primary */
 
     --secondary: 22 84% 53%;
     --secondary-foreground: 0 0% 98%;
@@ -80,8 +80,8 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 217 91.2% 25%; /* Dark blue for dark mode */
+    --primary-foreground: 0 0% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
