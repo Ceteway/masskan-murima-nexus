@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MapPin, Bed, Bath, Square, Star } from "lucide-react";
 import { useState } from "react";
+import { Json } from "@/integrations/supabase/types";
 
 interface PropertyCardProps {
   id: string;
@@ -16,7 +17,7 @@ interface PropertyCardProps {
   bedrooms: number;
   bathrooms: number;
   area: number;
-  images: string[]; // Changed from image: string; to images: string[];
+  images: Json | null;
   type: string;
   featured?: boolean;
   managed_by?: string;
@@ -36,41 +37,49 @@ const PropertyCard = ({
   bedrooms,
   bathrooms, 
   area, 
-  images, // Changed from image to images
+  images,
   type,
   featured = false,
   managed_by,
   landlord_name,
   agency_name
-  image // Add image prop for backward compatibility
+  image
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  // Use images array if available, otherwise fall back to single image
-  const displayImages = images && images.length > 0 ? images : (image ? [image] : []);
+  // Safely handle images prop and create a safe array of strings
+  const safeImages: string[] = (() => {
+    if (Array.isArray(images)) {
+      return images.filter((img): img is string => typeof img === 'string');
+    }
+    if (image && typeof image === 'string') {
+      return [image];
+    }
+    return [];
+  })();
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
       {/* Image Container */}
       <div className="relative overflow-hidden">
         <img
-          src={displayImages.length > 0 ? displayImages[0] : `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`}
+          src={safeImages.length > 0 ? safeImages[0] : `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`}
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
 
         {/* Multiple Images Indicator */}
-        {displayImages.length > 1 && (
+        {safeImages.length > 1 && (
           <div className="absolute bottom-3 left-3 flex gap-1">
-            {displayImages.slice(0, 3).map((_, index) => (
+            {safeImages.slice(0, 3).map((_, index) => (
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'}`}
               />
             ))}
-            {displayImages.length > 3 && (
+            {safeImages.length > 3 && (
               <div className="text-white text-xs font-medium ml-1">
-                +{displayImages.length - 3}
+                +{safeImages.length - 3}
               </div>
             )}
           </div>
