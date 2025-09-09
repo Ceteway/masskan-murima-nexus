@@ -43,7 +43,6 @@ const PropertyCard = ({
   managed_by,
   landlord_name,
   agency_name
-  image
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
