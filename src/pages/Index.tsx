@@ -7,20 +7,11 @@ import UniversalSearchBar from '@/components/UniversalSearchBar';
 import { useSearchProperties } from '@/hooks/useSearch';
 import { useState } from 'react';
 
-interface SearchFilters {
-  location?: string;
-  type?: string;
-  priceMin?: number;
-  priceMax?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-}
-
 const Index = () => {
-  const [searchFilters, setSearchFilters] = useState<SearchFilters>({});
+  const [searchFilters, setSearchFilters] = useState({});
   const { data: searchResults } = useSearchProperties(searchFilters);
 
-  const handleSearch = (filters: SearchFilters) => {
+  const handleSearch = (filters: any) => {
     const searchFilters = {
       location: filters.location || undefined,
       type: filters.type || undefined,
@@ -35,7 +26,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <Hero />
+      <Hero>
+        <UniversalSearchBar />
+      </Hero>
       <Features />
       <FeaturedProperties searchResults={searchResults} />
       <Footer />

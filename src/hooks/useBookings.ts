@@ -36,8 +36,6 @@ export const useCreateBooking = () => {
       guest_email: string;
       guest_phone: string;
       booking_date: string;
-      check_in_date: string;
-      check_out_date: string;
     }) => {
       if (!user) throw new Error("User must be authenticated");
 

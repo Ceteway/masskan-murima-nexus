@@ -8,7 +8,6 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { useProfile } from "@/hooks/useProfile";
-import { Shield } from "lucide-react";
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -19,7 +18,6 @@ const Navigation = () => {
   const {
     data: profile
   } = useProfile();
-  const { isAdmin, isModerator } = useAdminAccess();
   const navItems = [{
     href: "/",
     label: "Home",
@@ -107,27 +105,6 @@ const Navigation = () => {
                         Dashboard
                       </Link>
                     </DropdownMenuItem>
-                    {(isAdmin || isModerator) && (
-                      <>
-                        <DropdownMenuSeparator />
-                        {isAdmin && (
-                          <DropdownMenuItem asChild>
-                            <Link to="/admin/dashboard" className="cursor-pointer">
-                              <Shield className="mr-2 h-4 w-4" />
-                              Admin Dashboard
-                            </Link>
-                          </DropdownMenuItem>
-                        )}
-                        {isModerator && (
-                          <DropdownMenuItem asChild>
-                            <Link to="/admin/moderator" className="cursor-pointer">
-                              <Shield className="mr-2 h-4 w-4" />
-                              Moderator Dashboard
-                            </Link>
-                          </DropdownMenuItem>
-                        )}
-                      </>
-                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="cursor-pointer" onClick={() => signOut()}>
                       <LogOut className="mr-2 h-4 w-4" />
@@ -177,26 +154,6 @@ const Navigation = () => {
                           Dashboard
                         </Link>
                       </Button>
-                      {(isAdmin || isModerator) && (
-                        <>
-                          {isAdmin && (
-                            <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                              <Link to="/admin/dashboard" onClick={() => setIsOpen(false)}>
-                                <Shield className="mr-2 h-4 w-4" />
-                                Admin Dashboard
-                              </Link>
-                            </Button>
-                          )}
-                          {isModerator && (
-                            <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
-                              <Link to="/admin/moderator" onClick={() => setIsOpen(false)}>
-                                <Shield className="mr-2 h-4 w-4" />
-                                Moderator Dashboard
-                              </Link>
-                            </Button>
-                          )}
-                        </>
-                      )}
                       <Button variant="ghost" size="sm" className="w-full justify-start" onClick={() => {
                     signOut();
                     setIsOpen(false);

@@ -21,7 +21,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectTo = (location.state as { from?: { pathname: string } })?.from?.pathname || '/';
+  const redirectTo = (location.state as any)?.from?.pathname || '/';
 
   useEffect(() => {
     if (user) {

@@ -5,8 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
-import { Upload, Image as ImageIcon, Plus, Bed, Bath, Square } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Upload, Image as ImageIcon, Plus } from 'lucide-react';
 import { useImageUpload } from '@/hooks/useImageUpload';
 import { useCreateProperty } from '@/hooks/useListings';
 import { useCreateMarketplaceItem } from '@/hooks/useListings';
@@ -17,34 +17,10 @@ interface ListingFormProps {
   type: 'property' | 'marketplace';
 }
 
-interface PropertyFormData {
-  title?: string;
-  location?: string;
-  price?: number;
-  bedrooms?: number;
-  bathrooms?: number;
-  area?: number;
-  type?: string;
-  price_type?: string;
-  managed_by?: string;
-  description?: string;
-}
-
-interface MarketplaceFormData {
-  title?: string;
-  location?: string;
-  price?: number;
-  category?: string;
-  condition?: string;
-  description?: string;
-}
-
-type FormData = PropertyFormData & MarketplaceFormData;
-
 const ListingForm = ({ type }: ListingFormProps) => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState<FormData>({});
+  const [formData, setFormData] = useState<any>({});
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,35 +67,17 @@ const ListingForm = ({ type }: ListingFormProps) => {
       );
       const primaryImageUrl = imageUrls[0];
 
+      const listingData = {
+        ...formData,
+        image: primaryImageUrl,
+        images: imageUrls, // Store all image URLs
+      };
+
       if (type === 'property') {
-        const propertyData = {
-          ...formData,
-          image: primaryImageUrl,
-          images: imageUrls,
-          managed_by: formData.managed_by!,
-          title: formData.title!,
-          location: formData.location!,
-          price: formData.price!,
-          bedrooms: formData.bedrooms!,
-          bathrooms: formData.bathrooms!,
-          area: formData.area!,
-          type: formData.type!,
-          price_type: formData.price_type!,
-        };
-        await createProperty.mutateAsync(propertyData);
+        await createProperty.mutateAsync(listingData);
         toast.success("Property listed successfully!");
       } else {
-        const marketplaceData = {
-          ...formData,
-          image: primaryImageUrl,
-          images: imageUrls,
-          title: formData.title!,
-          location: formData.location!,
-          price: formData.price!,
-          category: formData.category!,
-          condition: formData.condition!,
-        };
-        await createMarketplaceItem.mutateAsync(marketplaceData);
+        await createMarketplaceItem.mutateAsync(listingData);
         toast.success("Item listed successfully!");
       }
 
@@ -127,9 +85,8 @@ const ListingForm = ({ type }: ListingFormProps) => {
       setFormData({});
       setImages([]);
       setImagePreviews([]);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Failed to create listing";
-      toast.error(errorMessage);
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create listing");
     }
   };
 
@@ -265,11 +222,9 @@ const ListingForm = ({ type }: ListingFormProps) => {
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Rental">Rental</SelectItem>
-                      <SelectItem value="Airbnb">Airbnb</SelectItem>
-                      <SelectItem value="Office">Office Space</SelectItem>
-                      <SelectItem value="bedsitter">Bedsitter</SelectItem>
-                      <SelectItem value="single">Single Room</SelectItem>
+                      <SelectItem value="rental">Rental</SelectItem>
+                      <SelectItem value="airbnb">Airbnb</SelectItem>
+                      <SelectItem value="office">Office Space</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -286,18 +241,6 @@ const ListingForm = ({ type }: ListingFormProps) => {
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="managed_by">Managed By</Label>
-                <Select value={formData.managed_by} onValueChange={(value) => setFormData({...formData, managed_by: value})}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select management" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="landlord">Landlord</SelectItem>
-                    <SelectItem value="agency">Agency</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </>
           ) : (

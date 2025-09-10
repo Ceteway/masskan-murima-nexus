@@ -5,26 +5,7 @@ import { useFeaturedProperties } from "@/hooks/useProperties";
 import { LoadingSpinner } from "./LoadingSpinner";
 import { ErrorMessage } from "./ErrorMessage";
 
-interface Property {
-  id: string;
-  title: string;
-  location: string;
-  price: number;
-  price_type?: string;
-  rating: number;
-  reviews?: number;
-  bedrooms: number;
-  bathrooms: number;
-  area: number;
-  images: unknown; // Supabase Json type
-  type: string;
-  featured?: boolean;
-  managed_by?: string;
-  landlord_name?: string;
-  agency_name?: string;
-}
-
-const FeaturedProperties = ({ searchResults }: { searchResults?: Property[] }) => {
+const FeaturedProperties = ({ searchResults }: { searchResults?: any[] }) => {
   const { data: properties, isLoading, error, refetch } = useFeaturedProperties();
   
   const displayProperties = searchResults || properties;

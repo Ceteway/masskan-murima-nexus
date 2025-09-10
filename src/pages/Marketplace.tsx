@@ -9,9 +9,9 @@ import PurchaseModal from "@/components/PurchaseModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { MapPin, Sofa, Laptop, Car, Package, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Sofa, Laptop, Car, Package, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import PageHero from "@/components/PageHero";
 import heroMarketplace from "@/assets/hero-marketplace.jpg";
@@ -66,8 +66,8 @@ const Marketplace = () => {
                 <label className="text-sm font-medium text-white/80">Search Items</label>
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search items (e.g., Sofa, TV)"
+                  <Input 
+                    placeholder="Search items (e.g., Sofa, TV)" 
                     className="pl-10 bg-white/90 border-white/30 focus:border-primary text-black rounded-full"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

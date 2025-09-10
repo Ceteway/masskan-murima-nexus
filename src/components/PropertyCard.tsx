@@ -16,7 +16,7 @@ interface PropertyCardProps {
   bedrooms: number;
   bathrooms: number;
   area: number;
-  images: string[]; // Changed from image: string; to images: string[];
+  image: string;
   type: string;
   featured?: boolean;
   managed_by?: string;
@@ -35,7 +35,7 @@ const PropertyCard = ({
   bedrooms,
   bathrooms, 
   area, 
-  images, // Changed from image to images
+  image, 
   type,
   featured = false,
   managed_by,
@@ -44,34 +44,17 @@ const PropertyCard = ({
 }: PropertyCardProps) => {
   const [isFavorited, setIsFavorited] = useState(false);
 
-  console.log({ title, images, managed_by, landlord_name, agency_name });
+  console.log({ title, image, managed_by, landlord_name, agency_name });
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-card hover:-translate-y-2 border-0 bg-card/80 backdrop-blur">
       {/* Image Container */}
       <div className="relative overflow-hidden">
-        <img
-          src={images && images.length > 0 ? images[0] : `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`}
+        <img 
+          src={image || `https://via.placeholder.com/400x300.png?text=${title.replace(/\s/g, "+")}`} 
           alt={title}
           className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
-
-        {/* Multiple Images Indicator */}
-        {images && images.length > 1 && (
-          <div className="absolute bottom-3 left-3 flex gap-1">
-            {images.slice(0, 3).map((_, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/50'}`}
-              />
-            ))}
-            {images.length > 3 && (
-              <div className="text-white text-xs font-medium ml-1">
-                +{images.length - 3}
-              </div>
-            )}
-          </div>
-        )}
         
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

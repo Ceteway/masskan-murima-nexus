@@ -46,7 +46,6 @@ export const useCreateProperty = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["properties"] });
       queryClient.invalidateQueries({ queryKey: ["user_properties"] });
-      queryClient.invalidateQueries({ queryKey: ["admin_properties"] });
     },
   });
 };
@@ -102,40 +101,6 @@ export const useCreateMarketplaceItem = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["marketplace_items"] });
       queryClient.invalidateQueries({ queryKey: ["user_marketplace_items"] });
-      queryClient.invalidateQueries({ queryKey: ["admin_marketplace"] });
-    },
-  });
-};
-
-export const useCreateMovingService = () => {
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-
-  return useMutation({
-    mutationFn: async (service: {
-      name: string;
-      location: string;
-      price_range: string;
-      image: string;
-      description?: string;
-    }) => {
-      if (!user) throw new Error("User must be authenticated");
-
-      const { data, error } = await supabase
-        .from("moving_services")
-        .insert({
-          ...service,
-          created_by: user.id,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["moving_services"] });
-      queryClient.invalidateQueries({ queryKey: ["admin_services"] });
     },
   });
 };
