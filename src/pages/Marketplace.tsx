@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Sofa, Laptop, Car, Package, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import PageHero from "@/components/PageHero";
+import heroMarketplace from "@/assets/hero-marketplace.jpg";
 
 const Marketplace = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,7 +55,7 @@ const Marketplace = () => {
       <PageHero 
         title="Household Items Marketplace"
         subtitle="Buy and sell furniture, electronics, and more with verified users."
-        imageUrl="https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg"
+        imageUrl={heroMarketplace}
       />
 
       <section className="py-16 -mt-24 relative z-10">

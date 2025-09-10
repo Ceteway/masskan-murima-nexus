@@ -13,13 +13,12 @@ import { ErrorMessage } from '@/components/ErrorMessage';
 import { toast } from 'sonner';
 import { 
   Calendar, MapPin, Package, Home, Truck, User, Mail, Phone, 
-  Plus, Edit, Trash2, Check, X, ShieldCheck, UserCog, BarChart3, Settings
+  Plus, Edit, Trash2, Check, X, ShieldCheck, UserCog, BarChart3 
 } from 'lucide-react';
 import { format } from 'date-fns';
-import AdminListingForm from '@/components/AdminListingForm';
+import ListingForm from '@/components/ListingForm';
 import UserManagement from '@/components/UserManagement';
 import MovingServiceForm from '@/components/MovingServiceForm';
-import AdminListingManagement from '@/components/AdminListingManagement';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
@@ -302,7 +301,7 @@ const AdminDashboard = () => {
           </div>
 
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-7">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 Overview
@@ -322,10 +321,6 @@ const AdminDashboard = () => {
               <TabsTrigger value="listings" className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
                 Listings
-              </TabsTrigger>
-              <TabsTrigger value="manage" className="flex items-center gap-2">
-                <Edit className="h-4 w-4" />
-                Manage
               </TabsTrigger>
               <TabsTrigger value="users" className="flex items-center gap-2">
                 <UserCog className="h-4 w-4" />
@@ -391,8 +386,8 @@ const AdminDashboard = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      <AdminListingForm type="property" />
-                      <AdminListingForm type="marketplace" />
+                      <ListingForm type="property" />
+                      <ListingForm type="marketplace" />
                       <MovingServiceForm />
                     </div>
                   </CardContent>
@@ -408,7 +403,7 @@ const AdminDashboard = () => {
                     <CardDescription>Add new properties to the platform</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <AdminListingForm type="property" />
+                    <ListingForm type="property" />
                   </CardContent>
                 </Card>
 
@@ -418,7 +413,7 @@ const AdminDashboard = () => {
                     <CardDescription>Add new items to the marketplace</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <AdminListingForm type="marketplace" />
+                    <ListingForm type="marketplace" />
                   </CardContent>
                 </Card>
                 <Card>
@@ -457,10 +452,6 @@ const AdminDashboard = () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="manage" className="space-y-6">
-              <AdminListingManagement />
             </TabsContent>
 
             <TabsContent value="users" className="space-y-6">
