@@ -1,0 +1,14 @@
+[build]
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Environment variables (you'll need to set OPENROUTER_API_KEY in Netlify dashboard)
+# OPENROUTER_API_KEY = "your-api-key-here"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
